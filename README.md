@@ -1,6 +1,6 @@
-# AIOutlet Documentation
+# xShop.ai Documentation
 
-Central documentation for AIOutlet project
+Central documentation for xShop.ai project
 
 ## Available Documentation
 

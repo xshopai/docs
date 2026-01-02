@@ -1,4 +1,4 @@
-# AIOutlet Platform Architecture
+# xShop.ai Platform Architecture
 
 > **Document Version**: 1.0  
 > **Last Updated**: November 3, 2025  
@@ -20,7 +20,7 @@
 
 ## Overview
 
-AIOutlet is a cloud-native, microservices-based e-commerce platform built for scalability, resilience, and maintainability. The platform follows Domain-Driven Design (DDD) principles with event-driven architecture patterns.
+xShop.ai is a cloud-native, microservices-based e-commerce platform built for scalability, resilience, and maintainability. The platform follows Domain-Driven Design (DDD) principles with event-driven architecture patterns.
 
 ### Architecture Principles
 

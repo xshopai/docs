@@ -620,7 +620,7 @@ Notification Service (Port 3003)
        ├─ firstName: John
        ├─ verificationLink: <url>
        ├─ expirationHours: 24
-       └─ companyName: AIOutlet
+       └─ companyName: xShop.ai
     ↓
     3. EMAIL COMPOSITION
        To: user@example.com
@@ -628,7 +628,7 @@ Notification Service (Port 3003)
        Subject: Verify your email address
        HTML Body:
        ┌──────────────────────────────────┐
-       │ Welcome to AIOutlet, John!       │
+       │ Welcome to xShop.ai, John!       │
        │                                  │
        │ Please verify your email by      │
        │ clicking the button below:       │

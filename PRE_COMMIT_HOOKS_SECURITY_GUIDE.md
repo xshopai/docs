@@ -2,7 +2,7 @@
 
 ## Overview
 
-Pre-commit hooks are automated security and code quality checks that run before each git commit. This comprehensive guide covers the implementation, configuration, and best practices for using pre-commit hooks in the AIOutlet project to prevent security vulnerabilities and maintain code quality.
+Pre-commit hooks are automated security and code quality checks that run before each git commit. This comprehensive guide covers the implementation, configuration, and best practices for using pre-commit hooks in the xShop.ai project to prevent security vulnerabilities and maintain code quality.
 
 ## Table of Contents
 
@@ -693,7 +693,7 @@ rm -rf ~/.cache/pre-commit
 
 ## Conclusion
 
-Pre-commit hooks provide essential security and quality assurance for the AIOutlet project. By implementing comprehensive checks before code reaches the repository, we:
+Pre-commit hooks provide essential security and quality assurance for the xShop.ai project. By implementing comprehensive checks before code reaches the repository, we:
 
 - **Prevent security vulnerabilities** from being committed
 - **Maintain consistent code quality** across the team  
@@ -708,4 +708,4 @@ For questions or additional support, please refer to the project's security docu
 
 **Last Updated**: August 20, 2025  
 **Version**: 1.0  
-**Author**: AIOutlet Development Team
+**Author**: xShop.ai Development Team
