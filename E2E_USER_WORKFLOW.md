@@ -51,7 +51,7 @@
                                                                                           ▼
                                                                                    ┌──────────────────────────────────┐
                                                                                    │   RabbitMQ Message Broker        │
-                                                                                   │   Exchange: aioutlet.events      │
+                                                                                   │   Exchange: xshopai.events      │
                                                                                    │                                  │
                                                                                    │   Topics:                        │
                                                                                    │   • auth.user.registered         │
@@ -237,7 +237,7 @@ POST /bff/cart/transfer (merge guest cart to user cart after login)
                                               ▼
                                         ┌──────────────────────────────────┐
                                         │   RabbitMQ Message Broker        │
-                                        │   Exchange: aioutlet.events      │
+                                        │   Exchange: xshopai.events      │
                                         │                                  │
                                         │   Topic: order.created           │
                                         │   Payload:                       │
@@ -292,7 +292,7 @@ Authorization:
                                                        ▼
                                         ┌──────────────────────────────────┐
                                         │   RabbitMQ Message Broker        │
-                                        │   Exchange: aioutlet.events      │
+                                        │   Exchange: xshopai.events      │
                                         │                                  │
                                         │   Topic: payment.processing      │
                                         │   Payload:                       │
@@ -320,7 +320,7 @@ Authorization:
                                       ▼
                          ┌──────────────────────────────────┐
                          │   RabbitMQ Message Broker        │
-                         │   Exchange: aioutlet.events      │
+                         │   Exchange: xshopai.events      │
                          │                                  │
                          │   Topic: payment.processed       │
                          │   Payload:                       │
@@ -368,7 +368,7 @@ order.created → payment.processing → PaymentService → payment.processed
                                         ▼
                          ┌──────────────────────────────────┐
                          │   RabbitMQ Message Broker        │
-                         │   Exchange: aioutlet.events      │
+                         │   Exchange: xshopai.events      │
                          │                                  │
                          │   Topic: inventory.reservation   │
                          │   Payload:                       │
@@ -396,7 +396,7 @@ order.created → payment.processing → PaymentService → payment.processed
                                  ▼
                       ┌──────────────────────────────────┐
                       │   RabbitMQ Message Broker        │
-                      │   Exchange: aioutlet.events      │
+                      │   Exchange: xshopai.events      │
                       │                                  │
                       │   Topic: inventory.reserved      │
                       │   Payload:                       │
@@ -654,7 +654,7 @@ GET /reviews/user/{userId}
 
 ```
 RabbitMQ Exchanges & Queues:
-├─ aioutlet.events (topic exchange)
+├─ xshopai.events (topic exchange)
 │  ├─ order.created
 │  ├─ order.updated
 │  ├─ order.cancelled

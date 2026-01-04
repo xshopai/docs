@@ -1,6 +1,6 @@
-# Contributing to xShop.ai Docs
+# Contributing to xshop.ai Docs
 
-We welcome contributions to the xShop.ai Docs project! By contributing, you can help improve the project and make it more useful for everyone.
+We welcome contributions to the xshop.ai Docs project! By contributing, you can help improve the project and make it more useful for everyone.
 
 ## How to Contribute
 

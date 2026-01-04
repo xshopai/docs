@@ -210,7 +210,7 @@ The Auth Service uses a **Service Client pattern** to communicate with the User 
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                          RABBITMQ MESSAGE BROKER (Port 9001)                                    │
 │                                                                                                  │
-│  Exchange: aioutlet.events (Topic Exchange)                                                     │
+│  Exchange: xshopai.events (Topic Exchange)                                                     │
 │                                                                                                  │
 │  Queues & Routing Keys:                                                                         │
 │  ├─ Queue: audit-service-queue                                                                  │
@@ -435,7 +435,7 @@ Auth Service (Port 3001)
     5. EVENT PUBLISHING PHASE
 
        Event 1: auth.user.registered
-       ├─ Exchange: aioutlet.events
+       ├─ Exchange: xshopai.events
        ├─ Routing Key: auth.user.registered
        ├─ Payload: {
        │    userId: "507f1f77bcf86cd799439011",
@@ -452,7 +452,7 @@ Auth Service (Port 3001)
        └─ Purpose: Audit trail for registration
 
        Event 2: auth.email.verification.requested
-       ├─ Exchange: aioutlet.events
+       ├─ Exchange: xshopai.events
        ├─ Routing Key: auth.email.verification.requested
        ├─ Payload: {
        │    userId: "507f1f77bcf86cd799439011",
@@ -516,7 +516,7 @@ User Service (Port 3002)
     ↓
     4. EVENT PUBLISHING
        Event: user.created
-       ├─ Exchange: aioutlet.events
+       ├─ Exchange: xshopai.events
        ├─ Routing Key: user.created
        ├─ Payload: {
        │    userId: "507f1f77bcf86cd799439011",
@@ -620,15 +620,15 @@ Notification Service (Port 3003)
        ├─ firstName: John
        ├─ verificationLink: <url>
        ├─ expirationHours: 24
-       └─ companyName: xShop.ai
+       └─ companyName: xshop.ai
     ↓
     3. EMAIL COMPOSITION
        To: user@example.com
-       From: noreply@aioutlet.com
+       From: noreply@xshopai.com
        Subject: Verify your email address
        HTML Body:
        ┌──────────────────────────────────┐
-       │ Welcome to xShop.ai, John!       │
+       │ Welcome to xshop.ai, John!       │
        │                                  │
        │ Please verify your email by      │
        │ clicking the button below:       │
