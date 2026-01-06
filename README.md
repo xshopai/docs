@@ -1,6 +1,6 @@
-# xshop.ai Documentation
+# xshopai Documentation
 
-Central documentation for xshop.ai project
+Central documentation for xshopai project
 
 ## Available Documentation
 

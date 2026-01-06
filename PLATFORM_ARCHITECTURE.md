@@ -1,4 +1,4 @@
-# xshop.ai Platform Architecture
+# xshopai Platform Architecture
 
 > **Document Version**: 1.0  
 > **Last Updated**: November 3, 2025  
@@ -20,7 +20,7 @@
 
 ## Overview
 
-xshop.ai is a cloud-native, microservices-based e-commerce platform built for scalability, resilience, and maintainability. The platform follows Domain-Driven Design (DDD) principles with event-driven architecture patterns.
+xshopai is a cloud-native, microservices-based e-commerce platform built for scalability, resilience, and maintainability. The platform follows Domain-Driven Design (DDD) principles with event-driven architecture patterns.
 
 ### Architecture Principles
 

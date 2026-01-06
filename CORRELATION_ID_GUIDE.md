@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the end-to-end correlation ID implementation across all microservices in the xshop.ai platform. Correlation IDs enable distributed tracing, allowing you to track a single request as it flows through multiple services.
+This document describes the end-to-end correlation ID implementation across all microservices in the xshopai platform. Correlation IDs enable distributed tracing, allowing you to track a single request as it flows through multiple services.
 
 ## What is a Correlation ID?
 

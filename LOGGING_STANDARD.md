@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document defines the standardized logging approach across all xshop.ai microservices to ensure consistent monitoring, debugging, and observability.
+This document defines the standardized logging approach across all xshopai microservices to ensure consistent monitoring, debugging, and observability.
 
 ## Log Levels and Usage
 
