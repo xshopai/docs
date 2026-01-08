@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the standardized logging implementation across all microservices in the AI Outlet platform. The logging system is designed to provide consistent, correlation ID-enabled, environment-aware logging with proper dev vs production configurations.
+This document outlines the standardized logging implementation across all microservices in the xshopai platform. The logging system is designed to provide consistent, correlation ID-enabled, environment-aware logging with proper dev vs production configurations.
 
 ## Services Covered
 
@@ -345,4 +345,4 @@ The standardized logging implementation provides:
 - Structured logging for analysis
 - Performance and business event tracking
 
-This foundation enables effective monitoring, debugging, and business intelligence across the entire AI Outlet platform.
+This foundation enables effective monitoring, debugging, and business intelligence across the entire xshopai platform.

@@ -1,6 +1,6 @@
 # Rate Limiting Implementation Summary
 
-This document summarizes the rate limiting implementation across all microservices in the AI Outlet platform.
+This document summarizes the rate limiting implementation across all microservices in the xshopai platform.
 
 ## Implementation Status
 
