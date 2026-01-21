@@ -1,10 +1,43 @@
-# Architecture Document
+# Architecture Document Template
 
-## Inventory Service - xshopai Platform
+## [Service Name] - xshopai Platform
+
+# <!--
+
+# TEMPLATE INSTRUCTIONS (Delete this block when filling in)
+
+This is the master architecture template for all xshopai microservices.
+
+HOW TO USE:
+
+1. Copy this template to your service's docs/ folder
+2. Replace [Service Name] in the title with your actual service name
+3. Fill in all sections marked with <!-- REQUIRED --> (mandatory)
+4. Fill in sections marked with <!-- RECOMMENDED --> if applicable
+5. Delete all instruction comments when done
+
+TECH STACK OPTIONS (choose one per service):
+
+- Python 3.11+ / FastAPI (product-service, inventory-service)
+- Node.js 18+ / Express 5.x (user-service, auth-service, admin-service, audit-service, notification-service, chat-service, review-service, web-bff)
+- Java 17+ / Quarkus (cart-service, order-processor-service)
+- .NET 8 / ASP.NET Core (order-service, payment-service)
+- React 18 / Vite (admin-ui, customer-ui)
+
+MESSAGING:
+
+- All services use Dapr Pub/Sub with RabbitMQ backend
+- Event format: CloudEvents 1.0 specification
+
+PRD REFERENCE:
+
+- Link your PRD in Section 1.5 References
+- # Use PRD section numbers when describing requirements
+  -->
 
 **Version:** 1.0  
-**Last Updated:** January 19, 2026  
-**Status:** Draft  
+**Last Updated:** <!-- YYYY-MM-DD -->  
+**Status:** <!-- Draft | Review | Approved -->  
 **Owner:** xshopai Platform Team
 
 ---
@@ -12,426 +45,1628 @@
 ## Table of Contents
 
 1. [Overview](#1-overview)
-2. [Architecture Principles](#2-architecture-principles)
-3. [System Context](#3-system-context)
-4. [Component Architecture](#4-component-architecture)
-5. [Data Architecture](#5-data-architecture)
-6. [API Design](#6-api-design)
-7. [Event-Driven Architecture](#7-event-driven-architecture)
-8. [Infrastructure & Deployment](#8-infrastructure--deployment)
-9. [Security Architecture](#9-security-architecture)
-10. [Observability](#10-observability)
-11. [Scalability & Performance](#11-scalability--performance)
-12. [Disaster Recovery](#12-disaster-recovery)
-13. [Decision Log](#13-decision-log)
+   - 1.1 [Purpose](#11-purpose)
+   - 1.2 [Scope](#12-scope)
+   - 1.3 [Service Summary](#13-service-summary)
+   - 1.4 [Directory Structure](#14-directory-structure)
+   - 1.5 [References](#15-references)
+2. [System Context](#2-system-context)
+   - 2.1 [Context Diagram](#21-context-diagram)
+   - 2.2 [External Interfaces](#22-external-interfaces)
+   - 2.3 [Dependencies](#23-dependencies)
+3. [Data Architecture](#3-data-architecture)
+   - 3.1 [Data Model Overview](#31-data-model-overview)
+   - 3.2 [Entity Definitions](#32-entity-definitions)
+   - 3.3 [Indexes](#33-indexes)
+   - 3.4 [Caching Strategy](#34-caching-strategy)
+4. [API Design](#4-api-design)
+   - 4.1 [API Overview](#41-api-overview)
+   - 4.2 [Endpoint Summary](#42-endpoint-summary)
+   - 4.3 [Request/Response Patterns](#43-requestresponse-patterns)
+   - 4.4 [Error Code Catalog](#44-error-code-catalog)
+   - 4.5 [Rate Limiting](#45-rate-limiting)
+5. [Event Architecture](#5-event-architecture)
+   - 5.1 [Event Overview](#51-event-overview)
+   - 5.2 [Published Events](#52-published-events)
+   - 5.3 [Consumed Events](#53-consumed-events)
+   - 5.4 [CloudEvents Envelope](#54-cloudevents-envelope)
+   - 5.5 [Dapr Configuration](#55-dapr-configuration)
+   - 5.6 [Idempotency & Dead Letter Handling](#56-idempotency--dead-letter-handling)
+6. [Configuration](#6-configuration)
+   - 6.1 [Environment Variables](#61-environment-variables)
+   - 6.2 [Secrets Management](#62-secrets-management)
+   - 6.3 [Feature Flags](#63-feature-flags)
+7. [Deployment](#7-deployment)
+   - 7.1 [Container Configuration](#71-container-configuration)
+   - 7.2 [Deployment Topology](#72-deployment-topology)
+   - 7.3 [CI/CD Pipeline](#73-cicd-pipeline)
+   - 7.4 [Scaling Strategy](#74-scaling-strategy)
+8. [Observability](#8-observability)
+   - 8.1 [Logging](#81-logging)
+   - 8.2 [Metrics](#82-metrics)
+   - 8.3 [Distributed Tracing](#83-distributed-tracing)
+   - 8.4 [Health Checks](#84-health-checks)
+   - 8.5 [Alerting Rules](#85-alerting-rules)
+9. [Error Handling](#9-error-handling)
+   - 9.1 [Error Response Format](#91-error-response-format)
+   - 9.2 [Exception Handling Patterns](#92-exception-handling-patterns)
+   - 9.3 [Correlation ID Flow](#93-correlation-id-flow)
+   - 9.4 [Retry & Circuit Breaker](#94-retry--circuit-breaker)
+10. [Security](#10-security)
+    - 10.1 [Authentication](#101-authentication)
+    - 10.2 [Authorization](#102-authorization)
+    - 10.3 [Data Protection](#103-data-protection)
+    - 10.4 [Input Validation](#104-input-validation)
+11. [Appendix](#11-appendix)
+    - A. [Quick Reference](#a-quick-reference)
+    - B. [Architecture Decision Records](#b-architecture-decision-records)
+    - C. [Glossary](#c-glossary)
+    - D. [Revision History](#d-revision-history)
 
 ---
 
 ## 1. Overview
 
+<!-- REQUIRED: All subsections in Overview are mandatory -->
+
 ### 1.1 Purpose
-<!-- Brief description of what this document covers -->
+
+<!--
+Describe what this service does and why it exists.
+Reference PRD section if applicable.
+Example: "The Inventory Service manages stock levels, reservations, and warehouse locations for all products in the xshopai platform (PRD Section 1.1)."
+-->
 
 ### 1.2 Scope
-<!-- What is in scope and out of scope for this architecture -->
+
+**In Scope:**
+
+<!-- List what this service handles -->
+
+-
+-
+- **Out of Scope:**
+
+<!-- List what this service does NOT handle and who handles it -->
+
+-
 
 ### 1.3 Service Summary
 
-| Attribute | Value |
-|-----------|-------|
-| Service Name | <!-- name --> |
-| Tech Stack | <!-- language/framework --> |
-| Database | <!-- database type --> |
-| Cache | <!-- cache type --> |
-| Messaging | <!-- messaging system --> |
-| Main Port | <!-- port --> |
-| Dapr HTTP Port | <!-- port --> |
-| Dapr gRPC Port | <!-- port --> |
+| Attribute          | Value                                                |
+| ------------------ | ---------------------------------------------------- |
+| **Service Name**   | <!-- e.g., inventory-service -->                     |
+| **Tech Stack**     | <!-- e.g., Python 3.11 / FastAPI -->                 |
+| **Database**       | <!-- e.g., PostgreSQL 15 -->                         |
+| **Cache**          | <!-- e.g., Redis 7.x / None -->                      |
+| **Messaging**      | <!-- Dapr Pub/Sub (RabbitMQ) -->                     |
+| **Main Port**      | <!-- e.g., 8084 -->                                  |
+| **Dapr HTTP Port** | <!-- e.g., 3504 -->                                  |
+| **Dapr gRPC Port** | <!-- e.g., 50004 -->                                 |
+| **Pattern**        | <!-- Publisher / Consumer / Publisher & Consumer --> |
 
-### 1.4 References
-<!-- Links to related documents: PRD, API specs, etc. -->
+### 1.4 Directory Structure
+
+<!--
+REQUIRED: Provide the actual directory structure of your service.
+This helps coding agents understand where to create/find files.
+-->
+
+```
+service-name/
+├── src/                          # Source code
+│   ├── api/                      # API routes/controllers
+│   │   ├── routes/               # Route definitions
+│   │   └── middleware/           # Request middleware
+│   ├── services/                 # Business logic layer
+│   ├── repositories/             # Data access layer
+│   ├── models/                   # Data models/entities
+│   ├── schemas/                  # Request/response schemas
+│   ├── events/                   # Event handlers and publishers
+│   │   ├── handlers/             # Event consumption handlers
+│   │   └── publishers/           # Event publishing logic
+│   ├── core/                     # Core utilities
+│   │   ├── config.py             # Configuration
+│   │   ├── logger.py             # Logging setup
+│   │   └── exceptions.py         # Custom exceptions
+│   └── utils/                    # Helper utilities
+├── tests/                        # Test files
+│   ├── unit/                     # Unit tests
+│   ├── integration/              # Integration tests
+│   └── fixtures/                 # Test fixtures
+├── dapr/                         # Dapr configuration
+│   └── components/               # Dapr component YAML files
+├── docs/                         # Documentation
+│   ├── ARCHITECTURE.md           # This file
+│   └── PRD.md                    # Product requirements
+├── docker-compose.yml            # Local development
+├── Dockerfile                    # Container definition
+├── requirements.txt              # Dependencies (Python)
+├── package.json                  # Dependencies (Node.js)
+├── pom.xml                       # Dependencies (Java)
+└── README.md                     # Quick start guide
+```
+
+### 1.5 References
+
+| Document             | Link                                                                  | Description          |
+| -------------------- | --------------------------------------------------------------------- | -------------------- |
+| PRD                  | [docs/PRD.md](./PRD.md)                                               | Product requirements |
+| API Spec             | <!-- link -->                                                         | OpenAPI/Swagger spec |
+| Runbook              | <!-- link -->                                                         | Operational runbook  |
+| Copilot Instructions | [.github/copilot-instructions.md](../.github/copilot-instructions.md) | AI coding guidelines |
 
 ---
 
-## 2. Architecture Principles
+## 2. System Context
 
-### 2.1 Guiding Principles
+<!-- REQUIRED: System context is mandatory for understanding service boundaries -->
 
-| Principle | Description |
-|-----------|-------------|
-| <!-- principle name --> | <!-- description --> |
-| <!-- principle name --> | <!-- description --> |
-| <!-- principle name --> | <!-- description --> |
+### 2.1 Context Diagram
 
-### 2.2 Design Constraints
-<!-- Technical or business constraints that influence the architecture -->
+<!--
+Show the service in context with:
+- Other xshopai services it interacts with
+- External systems (databases, message brokers, third-party APIs)
+- UI clients that call this service
+-->
 
-### 2.3 Assumptions
-<!-- Key assumptions made in the design -->
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              xshopai Platform                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌──────────────┐          ┌──────────────────┐          ┌──────────────┐  │
+│  │  customer-ui │────────► │     web-bff      │ ◄───────►│   admin-ui   │  │
+│  └──────────────┘   REST   └────────┬─────────┘   REST   └──────────────┘  │
+│                                     │                                       │
+│                                     │ REST                                  │
+│                                     ▼                                       │
+│                           ┌──────────────────┐                             │
+│                           │  [THIS SERVICE]  │                             │
+│                           └────────┬─────────┘                             │
+│                                    │                                        │
+│            ┌───────────────────────┼───────────────────────┐               │
+│            │                       │                       │               │
+│            ▼                       ▼                       ▼               │
+│  ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐       │
+│  │    Database      │   │   Dapr Pub/Sub   │   │  Other Services  │       │
+│  │  (PostgreSQL/    │   │   (RabbitMQ)     │   │  (list them)     │       │
+│  │   MongoDB)       │   │                  │   │                  │       │
+│  └──────────────────┘   └──────────────────┘   └──────────────────┘       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 2.2 External Interfaces
+
+| System           | Direction | Protocol    | Description                  |
+| ---------------- | --------- | ----------- | ---------------------------- |
+| web-bff          | Inbound   | REST/HTTP   | BFF aggregates calls from UI |
+| <!-- service --> | Outbound  | REST/HTTP   | <!-- description -->         |
+| <!-- service --> | Pub/Sub   | Dapr Events | <!-- description -->         |
+| Database         | Outbound  | TCP         | Primary data store           |
+
+### 2.3 Dependencies
+
+#### 2.3.1 Upstream Dependencies
+
+<!-- Services this service CALLS (synchronous dependencies) -->
+
+| Service          | Purpose             | Failure Impact                |
+| ---------------- | ------------------- | ----------------------------- |
+| <!-- service --> | <!-- why needed --> | <!-- what happens if down --> |
+
+#### 2.3.2 Downstream Consumers
+
+<!-- Services that CALL this service -->
+
+| Consumer         | Endpoints Used | SLA Requirement        |
+| ---------------- | -------------- | ---------------------- |
+| web-bff          | <!-- list -->  | <!-- response time --> |
+| <!-- service --> | <!-- list -->  | <!-- response time --> |
+
+#### 2.3.3 Event Dependencies
+
+<!-- Events this service publishes or consumes -->
+
+| Direction | Event Type     | Partner Service    |
+| --------- | -------------- | ------------------ |
+| Publishes | <!-- event --> | <!-- consumers --> |
+| Consumes  | <!-- event --> | <!-- producer -->  |
 
 ---
 
-## 3. System Context
+## 3. Data Architecture
 
-### 3.1 Context Diagram
+### 3.1 Database Selection
+
+| Aspect            | Decision                                    |
+| ----------------- | ------------------------------------------- |
+| **Database**      | <!-- PostgreSQL / MongoDB / Redis -->       |
+| **Justification** | <!-- Why this database for this service --> |
+| **Version**       | <!-- Specific version -->                   |
+| **Driver**        | <!-- Client library used -->                |
+
+### 3.2 Data Model
+
+#### 3.2.1 Entity Relationship Diagram
 
 ```
-<!-- ASCII/Mermaid diagram showing the service in context with external systems -->
+<!--
+ERD using ASCII art or Mermaid.
+Show tables/collections, relationships, cardinality.
+Example:
+┌─────────────────┐       ┌─────────────────┐
+│   inventory     │       │    warehouse    │
+├─────────────────┤       ├─────────────────┤
+│ id (PK)         │───────│ id (PK)         │
+│ product_id      │       │ name            │
+│ warehouse_id(FK)│◄──────│ location        │
+│ quantity        │       │ is_active       │
+└─────────────────┘       └─────────────────┘
+-->
 ```
 
-### 3.2 External Interfaces
+#### 3.2.2 Schema Definitions
 
-| System | Direction | Protocol | Description |
-|--------|-----------|----------|-------------|
-| <!-- system --> | <!-- in/out/both --> | <!-- protocol --> | <!-- description --> |
+<!--
+For each entity, document:
+- Table/Collection name
+- Fields with types
+- Constraints (PK, FK, UNIQUE, NOT NULL)
+- Indexes
+-->
 
-### 3.3 Dependencies
+**Entity: <!-- EntityName -->**
 
-#### 3.3.1 Upstream Dependencies
-<!-- Services/systems this service depends on -->
+| Field          | Type                   | Constraints          | Description           |
+| -------------- | ---------------------- | -------------------- | --------------------- |
+| id             | <!-- UUID/ObjectId --> | PK                   | Primary identifier    |
+| <!-- field --> | <!-- type -->          | <!-- constraints --> | <!-- description -->  |
+| created_at     | timestamp              | NOT NULL             | Creation timestamp    |
+| updated_at     | timestamp              | NOT NULL             | Last update timestamp |
 
-#### 3.3.2 Downstream Consumers
-<!-- Services/systems that depend on this service -->
+**Indexes:**
+
+```sql
+-- Performance indexes
+CREATE INDEX idx_<!-- table -->_<!-- field --> ON <!-- table -->(<!-- field -->);
+
+-- Unique constraints
+CREATE UNIQUE INDEX idx_<!-- table -->_unique ON <!-- table -->(<!-- fields -->);
+```
+
+### 3.3 Data Patterns
+
+#### 3.3.1 Soft Delete Pattern
+
+<!-- If using soft delete, document the pattern -->
+
+```python
+# Soft delete fields (add to all deletable entities)
+is_deleted: boolean (default: false)
+deleted_at: timestamp (nullable)
+deleted_by: string (nullable)
+```
+
+**Query Pattern:** All queries MUST include `WHERE is_deleted = false` unless explicitly retrieving deleted records.
+
+#### 3.3.2 Audit Trail Pattern
+
+<!-- If tracking changes, document the approach -->
+
+```python
+# Audit fields (add to all entities)
+created_at: timestamp
+created_by: string
+updated_at: timestamp
+updated_by: string
+```
+
+#### 3.3.3 Optimistic Locking Pattern
+
+<!-- If using version-based concurrency control -->
+
+```python
+# Version field for optimistic locking
+version: integer (default: 1)
+# Increment on each update, reject if version mismatch
+```
+
+### 3.4 Caching Strategy
+
+| Cache Layer      | Technology                 | TTL                | Invalidation                |
+| ---------------- | -------------------------- | ------------------ | --------------------------- |
+| L1 (In-Memory)   | <!-- e.g., Python dict --> | <!-- e.g., 60s --> | <!-- e.g., TTL expiry -->   |
+| L2 (Distributed) | <!-- e.g., Redis -->       | <!-- e.g., 5m -->  | <!-- e.g., Event-driven --> |
+
+**Cache Key Pattern:**
+
+```
+{service}:{entity}:{id}
+{service}:{query}:{hash}
+```
+
+### 3.5 Data Migration Strategy
+
+| Aspect                | Value                                                |
+| --------------------- | ---------------------------------------------------- |
+| **Tool**              | <!-- Alembic / Flyway / EF Migrations / Mongoose --> |
+| **Location**          | `<!-- path to migrations folder -->`                 |
+| **Naming Convention** | `<!-- e.g., V001__description.sql -->`               |
+
+**Migration Commands:**
+
+```bash
+# Run migrations
+<!-- command -->
+
+# Create new migration
+<!-- command -->
+
+# Rollback
+<!-- command -->
+```
 
 ---
 
-## 4. Component Architecture
+## 4. API Design
 
-### 4.1 High-Level Architecture Diagram
+### 4.1 API Overview
 
-```
-<!-- ASCII/Mermaid diagram showing internal components -->
-```
+| Attribute          | Value                       |
+| ------------------ | --------------------------- |
+| **Base Path**      | `/api/v1/<!-- resource -->` |
+| **Protocol**       | REST over HTTP/1.1          |
+| **Content Type**   | `application/json`          |
+| **Authentication** | JWT Bearer Token            |
+| **Versioning**     | URL path (`/api/v1/`)       |
 
-### 4.2 Component Descriptions
+### 4.2 Endpoint Summary
 
-| Component | Responsibility | Technology |
-|-----------|---------------|------------|
-| <!-- component --> | <!-- responsibility --> | <!-- tech --> |
+| Method | Endpoint                         | Description                 | Auth Required |
+| ------ | -------------------------------- | --------------------------- | ------------- |
+| POST   | `/api/v1/<!-- resource -->`      | Create <!-- resource -->    | JWT           |
+| GET    | `/api/v1/<!-- resource -->/{id}` | Get <!-- resource --> by ID | Optional      |
+| GET    | `/api/v1/<!-- resource -->`      | List <!-- resources -->     | Optional      |
+| PUT    | `/api/v1/<!-- resource -->/{id}` | Update <!-- resource -->    | JWT           |
+| DELETE | `/api/v1/<!-- resource -->/{id}` | Delete <!-- resource -->    | Admin         |
 
-### 4.3 Layer Structure
-
-#### 4.3.1 API Layer
-<!-- Description of controllers/routes -->
-
-#### 4.3.2 Service Layer
-<!-- Description of business logic layer -->
-
-#### 4.3.3 Repository Layer
-<!-- Description of data access layer -->
-
-#### 4.3.4 Infrastructure Layer
-<!-- Description of cross-cutting concerns -->
-
-### 4.4 Directory Structure
-
-```
-<!-- Project folder structure -->
-```
+**Auth Legend:** `JWT` = Valid JWT token required | `Admin` = Admin role required | `Service` = Service-to-service auth | `Optional` = Works with or without auth | `None` = Public endpoint
 
 ---
 
-## 5. Data Architecture
+### 4.3 Endpoints
 
-### 5.1 Data Model Overview
+<!-- Detailed endpoint specifications -->
+
+#### 4.3.1 Create <!-- Resource -->
+
+Creates a new <!-- resource --> in the system.
+
+**Request**
 
 ```
-<!-- ER diagram or schema diagram -->
+POST /api/v1/<!-- resource -->
 ```
 
-### 5.2 Entity Definitions
+**Headers**
 
-#### 5.2.1 <!-- Entity Name -->
+| Header          | Required | Description                 | Example                  |
+| --------------- | -------- | --------------------------- | ------------------------ |
+| `Authorization` | Yes      | JWT Bearer token            | `Bearer eyJhbGciOiJI...` |
+| `Content-Type`  | Yes      | Request body format         | `application/json`       |
+| `X-Request-ID`  | No       | Client-generated request ID | `req-123-456-789`        |
+| `X-Trace-ID`    | No       | Distributed tracing ID      | `trace-abc-def`          |
 
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| <!-- field --> | <!-- type --> | <!-- constraints --> | <!-- description --> |
+**Request Body**
 
-### 5.3 Indexes
-
-| Table | Index Name | Columns | Type | Purpose |
-|-------|------------|---------|------|---------|
-| <!-- table --> | <!-- name --> | <!-- columns --> | <!-- type --> | <!-- purpose --> |
-
-### 5.4 Data Migration Strategy
-<!-- How schema changes will be handled -->
-
-### 5.5 Caching Strategy
-
-#### 5.5.1 Cache Topology
-<!-- What caching approach: local, distributed, multi-level -->
-
-#### 5.5.2 Cache Policies
-
-| Data Type | TTL | Invalidation Strategy |
-|-----------|-----|----------------------|
-| <!-- type --> | <!-- duration --> | <!-- strategy --> |
-
----
-
-## 6. API Design
-
-### 6.1 API Overview
-
-| Category | Base Path | Description |
-|----------|-----------|-------------|
-| <!-- category --> | <!-- path --> | <!-- description --> |
-
-### 6.2 Endpoint Summary
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| <!-- method --> | <!-- path --> | <!-- description --> | <!-- auth type --> |
-
-### 6.3 Request/Response Patterns
-
-#### 6.3.1 Standard Response Format
 ```json
 {
-  // Response structure
+  "<!-- field1 -->": "<!-- value1 -->",
+  "<!-- field2 -->": <!-- value2 -->,
+  "<!-- field3 -->": "<!-- value3 -->"
 }
 ```
 
-#### 6.3.2 Error Response Format
+**Request Body Fields**
+
+| Field             | Type    | Required | Validation                     | Description                 |
+| ----------------- | ------- | -------- | ------------------------------ | --------------------------- |
+| `<!-- field1 -->` | string  | Yes      | 1-100 characters               | <!-- field1 description --> |
+| `<!-- field2 -->` | integer | Yes      | > 0                            | <!-- field2 description --> |
+| `<!-- field3 -->` | string  | No       | Valid enum: `value1`, `value2` | <!-- field3 description --> |
+
+**Success Response**
+
+```
+HTTP/1.1 201 Created
+Location: /api/v1/<!-- resource -->/<!-- id -->
+```
+
 ```json
 {
-  // Error structure
+  "success": true,
+  "data": {
+    "id": "<!-- generated-id -->",
+    "<!-- field1 -->": "<!-- value1 -->",
+    "<!-- field2 -->": <!-- value2 -->,
+    "<!-- field3 -->": "<!-- value3 -->",
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-01-15T10:30:00Z"
+  },
+  "message": "<!-- Resource --> created successfully"
 }
 ```
 
-### 6.4 API Versioning Strategy
-<!-- How API versions will be managed -->
+**Error Responses**
 
-### 6.5 Rate Limiting
-<!-- Rate limiting approach and thresholds -->
+| Status | Code                 | Condition                            | Example Message                          |
+| ------ | -------------------- | ------------------------------------ | ---------------------------------------- |
+| 400    | `VALIDATION_ERROR`   | Invalid or missing required fields   | "<!-- field1 --> is required"            |
+| 400    | `INVALID_FORMAT`     | Field format validation failed       | "<!-- field2 --> must be greater than 0" |
+| 401    | `UNAUTHORIZED`       | Missing or invalid JWT token         | "Authentication required"                |
+| 403    | `FORBIDDEN`          | User lacks permission                | "Insufficient permissions"               |
+| 409    | `DUPLICATE_RESOURCE` | Resource with same identifier exists | "<!-- Resource --> already exists"       |
+| 500    | `INTERNAL_ERROR`     | Unexpected server error              | "Internal server error"                  |
 
 ---
 
-## 7. Event-Driven Architecture
+#### 4.3.2 Get <!-- Resource --> by ID
 
-### 7.1 Event Overview
+Retrieves a single <!-- resource --> by its unique identifier.
+
+**Request**
 
 ```
-<!-- Diagram showing event flows -->
+GET /api/v1/<!-- resource -->/{id}
 ```
 
-### 7.2 Published Events
+**Path Parameters**
 
-| Event Type | Topic | Trigger | Payload Summary |
-|------------|-------|---------|-----------------|
-| <!-- event --> | <!-- topic --> | <!-- trigger --> | <!-- summary --> |
+| Parameter | Type   | Required | Description                         | Example           |
+| --------- | ------ | -------- | ----------------------------------- | ----------------- |
+| `id`      | string | Yes      | Unique <!-- resource --> identifier | `res-123-456-789` |
 
-### 7.3 Consumed Events
+**Headers**
 
-| Event Type | Source | Handler | Action |
-|------------|--------|---------|--------|
-| <!-- event --> | <!-- source --> | <!-- handler --> | <!-- action --> |
+| Header          | Required | Description                 | Example                  |
+| --------------- | -------- | --------------------------- | ------------------------ |
+| `Authorization` | No       | JWT Bearer token (optional) | `Bearer eyJhbGciOiJI...` |
+| `X-Request-ID`  | No       | Client-generated request ID | `req-123-456-789`        |
 
-### 7.4 Event Schemas
+**Success Response**
 
-#### 7.4.1 <!-- Event Name -->
+```
+HTTP/1.1 200 OK
+```
+
 ```json
 {
-  // Event payload structure
+  "success": true,
+  "data": {
+    "id": "<!-- id -->",
+    "<!-- field1 -->": "<!-- value1 -->",
+    "<!-- field2 -->": <!-- value2 -->,
+    "<!-- field3 -->": "<!-- value3 -->",
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-01-15T10:30:00Z"
+  }
 }
 ```
 
-### 7.5 Idempotency Strategy
-<!-- How duplicate events are handled -->
+**Error Responses**
 
-### 7.6 Dead Letter Queue Handling
-<!-- DLQ configuration and retry strategy -->
+| Status | Code             | Condition                        | Example Message                       |
+| ------ | ---------------- | -------------------------------- | ------------------------------------- |
+| 400    | `INVALID_ID`     | ID format is invalid             | "Invalid <!-- resource --> ID format" |
+| 404    | `NOT_FOUND`      | <!-- Resource --> does not exist | "<!-- Resource --> not found"         |
+| 500    | `INTERNAL_ERROR` | Unexpected server error          | "Internal server error"               |
 
 ---
 
-## 8. Infrastructure & Deployment
+#### 4.3.3 List <!-- Resources --> (Paginated)
 
-### 8.1 Deployment Diagram
+Retrieves a paginated list of <!-- resources --> with optional filtering and sorting.
+
+**Request**
 
 ```
-<!-- Deployment topology diagram -->
+GET /api/v1/<!-- resource -->?page=1&limit=20&sort=-createdAt&status=active
 ```
 
-### 8.2 Container Configuration
+**Query Parameters**
 
-| Setting | Value | Description |
-|---------|-------|-------------|
-| Base Image | <!-- image --> | <!-- description --> |
-| Resources | <!-- cpu/memory --> | <!-- description --> |
-| Replicas | <!-- count --> | <!-- description --> |
+| Parameter | Type    | Required | Default      | Validation  | Description                      |
+| --------- | ------- | -------- | ------------ | ----------- | -------------------------------- |
+| `page`    | integer | No       | 1            | >= 1        | Page number                      |
+| `limit`   | integer | No       | 20           | 1-100       | Items per page                   |
+| `sort`    | string  | No       | `-createdAt` | Valid field | Sort field (prefix `-` for desc) |
+| `status`  | string  | No       | -            | Valid enum  | Filter by status                 |
+| `search`  | string  | No       | -            | 1-100 chars | Search term for text fields      |
 
-### 8.3 Environment Configuration
+**Headers**
 
-| Environment | Purpose | Key Differences |
-|-------------|---------|-----------------|
-| <!-- env --> | <!-- purpose --> | <!-- differences --> |
+| Header          | Required | Description                 | Example                  |
+| --------------- | -------- | --------------------------- | ------------------------ |
+| `Authorization` | No       | JWT Bearer token (optional) | `Bearer eyJhbGciOiJI...` |
+| `X-Request-ID`  | No       | Client-generated request ID | `req-123-456-789`        |
 
-### 8.4 Configuration Management
+**Success Response**
 
-#### 8.4.1 Environment Variables
+```
+HTTP/1.1 200 OK
+```
 
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| <!-- var --> | <!-- description --> | <!-- yes/no --> | <!-- default --> |
-
-#### 8.4.2 Secrets Management
-<!-- How secrets are stored and accessed -->
-
-### 8.5 CI/CD Pipeline
-<!-- Build, test, deploy stages -->
-
----
-
-## 9. Security Architecture
-
-### 9.1 Authentication
-<!-- How requests are authenticated -->
-
-### 9.2 Authorization
-
-| Role | Permissions |
-|------|-------------|
-| <!-- role --> | <!-- permissions --> |
-
-### 9.3 Data Protection
-
-#### 9.3.1 Data at Rest
-<!-- Encryption approach for stored data -->
-
-#### 9.3.2 Data in Transit
-<!-- TLS/mTLS configuration -->
-
-### 9.4 Input Validation
-<!-- Validation approach and sanitization -->
-
-### 9.5 Security Headers
-<!-- HTTP security headers applied -->
-
----
-
-## 10. Observability
-
-### 10.1 Logging
-
-#### 10.1.1 Log Levels
-| Level | Usage |
-|-------|-------|
-| <!-- level --> | <!-- when to use --> |
-
-#### 10.1.2 Structured Log Format
 ```json
 {
-  // Log structure
+  "success": true,
+  "data": [
+    {
+      "id": "<!-- id-1 -->",
+      "<!-- field1 -->": "<!-- value1 -->",
+      "<!-- field2 -->": <!-- value2 -->,
+      "createdAt": "2025-01-15T10:30:00Z"
+    },
+    {
+      "id": "<!-- id-2 -->",
+      "<!-- field1 -->": "<!-- value1 -->",
+      "<!-- field2 -->": <!-- value2 -->,
+      "createdAt": "2025-01-14T09:15:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "totalItems": 150,
+    "totalPages": 8,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  }
 }
 ```
 
-### 10.2 Metrics
+**Error Responses**
 
-| Metric | Type | Description |
-|--------|------|-------------|
-| <!-- metric --> | <!-- counter/gauge/histogram --> | <!-- description --> |
-
-### 10.3 Tracing
-<!-- Distributed tracing approach -->
-
-### 10.4 Health Checks
-
-| Endpoint | Type | Checks |
-|----------|------|--------|
-| <!-- endpoint --> | <!-- liveness/readiness --> | <!-- what it checks --> |
-
-### 10.5 Alerting Rules
-
-| Alert | Condition | Severity | Action |
-|-------|-----------|----------|--------|
-| <!-- alert --> | <!-- condition --> | <!-- severity --> | <!-- action --> |
+| Status | Code                 | Condition                         | Example Message                    |
+| ------ | -------------------- | --------------------------------- | ---------------------------------- |
+| 400    | `INVALID_PARAMETER`  | Query parameter validation failed | "limit must be between 1 and 100"  |
+| 400    | `INVALID_SORT_FIELD` | Sort field does not exist         | "Invalid sort field: unknownField" |
+| 500    | `INTERNAL_ERROR`     | Unexpected server error           | "Internal server error"            |
 
 ---
 
-## 11. Scalability & Performance
-
-### 11.1 Performance Targets
-
-| Metric | Target |
-|--------|--------|
-| <!-- metric --> | <!-- target --> |
-
-### 11.2 Scaling Strategy
-
-#### 11.2.1 Horizontal Scaling
-<!-- Pod/instance scaling triggers -->
-
-#### 11.2.2 Database Scaling
-<!-- Read replicas, sharding strategy -->
-
-### 11.3 Performance Optimizations
-<!-- Key optimizations implemented -->
-
-### 11.4 Load Testing Results
-<!-- Summary of load testing -->
+<!-- Add more endpoint specifications as needed following the same pattern -->
 
 ---
 
-## 12. Disaster Recovery
+## 5. Event Architecture
 
-### 12.1 Backup Strategy
+<!--
+CRITICAL: This section documents ALL events published and consumed by this service.
+Coding agents use this for:
+- Implementing event publishers/consumers
+- Understanding async communication patterns
+- Debugging message flows
+-->
 
-| Data | Frequency | Retention | Location |
-|------|-----------|-----------|----------|
-| <!-- data --> | <!-- frequency --> | <!-- retention --> | <!-- location --> |
+### 5.1 Event Overview
 
-### 12.2 Recovery Procedures
+| Attribute              | Value                             |
+| ---------------------- | --------------------------------- |
+| **Message Broker**     | Dapr Pub/Sub with RabbitMQ        |
+| **Event Format**       | CloudEvents 1.0                   |
+| **Serialization**      | JSON                              |
+| **Delivery Guarantee** | At-least-once                     |
+| **Ordering**           | Per-partition (by correlation ID) |
 
-| Scenario | RTO | RPO | Procedure Reference |
-|----------|-----|-----|---------------------|
-| <!-- scenario --> | <!-- time --> | <!-- time --> | <!-- link --> |
+```
+<!-- Event flow diagram showing:
+     - This service's position in event topology
+     - Published event topics
+     - Consumed event topics
+     - Connected services -->
+```
 
-### 12.3 Failover Strategy
-<!-- How failover is handled -->
+### 5.2 Published Events
+
+<!--
+Document ALL events this service publishes.
+Include trigger conditions and full payload schemas.
+-->
+
+| Event Type                         | Topic                 | Trigger                 | Consumers                           |
+| ---------------------------------- | --------------------- | ----------------------- | ----------------------------------- |
+| `<!-- service -->.<!-- action -->` | `<!-- topic-name -->` | <!-- When triggered --> | <!-- List of consuming services --> |
+
+#### 5.2.1 <!-- Event Name --> Event
+
+**Trigger:** <!-- When this event is published -->
+
+**Payload Schema:**
+
+```json
+{
+  "specversion": "1.0",
+  "type": "<!-- service -->.<!-- action -->",
+  "source": "<!-- service-name -->",
+  "id": "evt-uuid-here",
+  "time": "2025-01-15T10:30:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    // Event-specific payload
+  },
+  "correlationid": "req-uuid-here",
+  "traceparent": "00-trace-id-span-id-01"
+}
+```
+
+### 5.3 Consumed Events
+
+<!--
+Document ALL events this service consumes.
+Include handler location and processing logic.
+-->
+
+| Event Type                        | Source                  | Handler                 | Idempotency Key      |
+| --------------------------------- | ----------------------- | ----------------------- | -------------------- |
+| `<!-- source -->.<!-- action -->` | <!-- source-service --> | `<!-- handler-path -->` | `<!-- key-field -->` |
+
+#### 5.3.1 <!-- Event Name --> Handler
+
+**Source Service:** <!-- Which service publishes this -->
+
+**Handler Location:** `src/events/handlers/<!-- handler -->.js` (or `.py`, `.java`, `.cs`)
+
+**Processing Logic:**
+
+1. <!-- Step 1 -->
+2. <!-- Step 2 -->
+3. <!-- Step 3 -->
+
+**Idempotency Strategy:** <!-- How duplicates are handled -->
+
+### 5.4 CloudEvents Envelope
+
+<!--
+CRITICAL: All events MUST follow CloudEvents 1.0 specification.
+This envelope structure is used by ALL xshopai services.
+-->
+
+```json
+{
+  "specversion": "1.0",
+  "type": "<!-- service -->.<!-- entity -->.<!-- action -->",
+  "source": "<!-- service-name -->",
+  "id": "evt-550e8400-e29b-41d4-a716-446655440000",
+  "time": "2025-01-15T10:30:00.000Z",
+  "datacontenttype": "application/json",
+  "subject": "<!-- optional: entity-id -->",
+  "data": {
+    // Event-specific payload
+  },
+  "correlationid": "req-550e8400-e29b-41d4-a716-446655440001",
+  "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01",
+  "causationid": "evt-previous-event-id"
+}
+```
+
+**Event Type Naming Convention:** `{service}.{entity}.{action}`
+
+- Examples: `user.created`, `order.completed`, `inventory.reserved`
+
+### 5.5 Dapr Configuration
+
+#### 5.5.1 Pub/Sub Component
+
+**File:** `dapr/components/pubsub.yaml`
+
+```yaml
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: <!-- service -->-pubsub
+  namespace: xshopai
+spec:
+  type: pubsub.rabbitmq
+  version: v1
+  metadata:
+    - name: connectionString
+      secretKeyRef:
+        name: rabbitmq-connection
+        key: connectionString
+    - name: durable
+      value: 'true'
+    - name: deletedWhenUnused
+      value: 'false'
+    - name: autoAck
+      value: 'false'
+    - name: deliveryMode
+      value: '2' # Persistent
+    - name: prefetchCount
+      value: '10'
+```
+
+#### 5.5.2 Subscription Configuration
+
+**File:** `dapr/components/subscription.yaml`
+
+```yaml
+apiVersion: dapr.io/v2alpha1
+kind: Subscription
+metadata:
+  name: <!-- service -->-subscriptions
+spec:
+  topic: <!-- topic-name -->
+  routes:
+    default: /events/<!-- handler-path -->
+  pubsubname: <!-- service -->-pubsub
+  deadLetterTopic: <!-- topic-name -->-dlq
+```
+
+### 5.6 Event Processing Patterns
+
+#### 5.6.1 Publisher Pattern
+
+```
+<!-- Language-specific example based on service tech stack -->
+```
+
+#### 5.6.2 Consumer Pattern
+
+```
+<!-- Language-specific example based on service tech stack -->
+```
+
+### 5.7 Error Handling & Retry
+
+| Error Type                   | Retry Strategy      | Max Attempts | Backoff             |
+| ---------------------------- | ------------------- | ------------ | ------------------- |
+| Transient (network, timeout) | Exponential backoff | 5            | 1s, 2s, 4s, 8s, 16s |
+| Business logic error         | No retry            | 1            | N/A                 |
+| Invalid message format       | Dead letter         | 1            | N/A                 |
+| Handler exception            | Linear backoff      | 3            | 5s, 10s, 15s        |
+
+**Dead Letter Queue:** `<!-- topic -->-dlq`
+
+- Messages moved after max retries exhausted
+- Manual intervention required for DLQ processing
+- Alert triggered when DLQ depth > threshold
+
+### 5.8 Event Monitoring
+
+| Metric                              | Type      | Description                      |
+| ----------------------------------- | --------- | -------------------------------- |
+| `events_published_total`            | Counter   | Total events published by type   |
+| `events_consumed_total`             | Counter   | Total events consumed by type    |
+| `event_processing_duration_seconds` | Histogram | Event processing time            |
+| `event_processing_errors_total`     | Counter   | Failed event processing attempts |
+| `dlq_depth`                         | Gauge     | Dead letter queue message count  |
 
 ---
 
-## 13. Decision Log
+## 6. Configuration
 
-### ADR Template
+<!--
+Split from Infrastructure to focus on service configuration.
+Environment variables, feature flags, secrets management.
+-->
 
-Each Architecture Decision Record should follow this format:
+### 6.1 Environment Variables
 
-| Field | Description |
-|-------|-------------|
-| ID | <!-- ADR-XXX --> |
-| Title | <!-- Decision title --> |
-| Status | <!-- Proposed/Accepted/Deprecated/Superseded --> |
-| Context | <!-- Why is this decision needed --> |
-| Decision | <!-- What was decided --> |
-| Consequences | <!-- Positive and negative impacts --> |
-| Date | <!-- When decided --> |
+<!--
+CRITICAL: Document ALL environment variables.
+Coding agents need this for deployment and local development.
+-->
 
-### Decision Records
+#### 6.1.1 Required Variables
 
-#### ADR-001: <!-- Title -->
-<!-- Use template above -->
+| Variable                           | Description                | Example         | Validation                       |
+| ---------------------------------- | -------------------------- | --------------- | -------------------------------- |
+| `PORT`                             | Service port               | `8080`          | Integer, 1-65535                 |
+| `NODE_ENV` / `ENVIRONMENT`         | Environment name           | `production`    | development, staging, production |
+| `DATABASE_URL`                     | Database connection string | `mongodb://...` | Valid URI                        |
+| `JWT_SECRET`                       | JWT signing key            | (from secret)   | Min 32 chars                     |
+| <!-- Add service-specific vars --> |                            |                 |                                  |
+
+#### 6.1.2 Optional Variables
+
+| Variable                           | Description          | Default | Notes                    |
+| ---------------------------------- | -------------------- | ------- | ------------------------ |
+| `LOG_LEVEL`                        | Logging verbosity    | `info`  | debug, info, warn, error |
+| `CORS_ORIGINS`                     | Allowed CORS origins | `*`     | Comma-separated URLs     |
+| `REQUEST_TIMEOUT_MS`               | Request timeout      | `30000` | Milliseconds             |
+| <!-- Add service-specific vars --> |                      |         |                          |
+
+### 6.2 Configuration Files
+
+| File                     | Purpose                | Environment |
+| ------------------------ | ---------------------- | ----------- |
+| `.env.example`           | Template for local dev | Local       |
+| `config/default.json`    | Default configuration  | All         |
+| `config/production.json` | Production overrides   | Production  |
+| `dapr/components/*.yaml` | Dapr components        | All         |
+
+### 6.3 Secrets Management
+
+<!--
+How secrets are stored, accessed, and rotated.
+-->
+
+| Secret                                | Storage         | Rotation | Access Method     |
+| ------------------------------------- | --------------- | -------- | ----------------- |
+| `DATABASE_PASSWORD`                   | Azure Key Vault | 90 days  | Dapr Secret Store |
+| `JWT_SECRET`                          | Azure Key Vault | 180 days | Dapr Secret Store |
+| `RABBITMQ_PASSWORD`                   | Azure Key Vault | 90 days  | Dapr Secret Store |
+| <!-- Add service-specific secrets --> |                 |          |                   |
+
+**Dapr Secret Store Configuration:**
+
+```yaml
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: secretstore
+spec:
+  type: secretstores.azure.keyvault
+  version: v1
+  metadata:
+    - name: vaultName
+      value: 'xshopai-secrets'
+    - name: azureClientId
+      value: '<!-- managed-identity-client-id -->'
+```
+
+### 6.4 Feature Flags
+
+| Flag          | Description          | Default             | Scope                       |
+| ------------- | -------------------- | ------------------- | --------------------------- |
+| <!-- flag --> | <!-- description --> | <!-- true/false --> | <!-- user/tenant/global --> |
+
+### 6.5 Configuration Validation
+
+<!--
+How configuration is validated at startup.
+-->
+
+- **Startup Validation:** All required variables checked before service starts
+- **Type Checking:** Variables validated against expected types
+- **Failure Behavior:** Service fails fast with clear error message if validation fails
+
+---
+
+## 7. Deployment
+
+<!--
+Container configuration, CI/CD, environment topology.
+-->
+
+### 7.1 Container Configuration
+
+**Dockerfile:**
+
+```dockerfile
+# Example structure - adjust for actual service
+FROM <!-- base-image -->
+
+WORKDIR /app
+COPY <!-- files -->
+RUN <!-- build commands -->
+
+EXPOSE <!-- port -->
+CMD ["<!-- entrypoint -->"]
+```
+
+| Setting          | Value                                           |
+| ---------------- | ----------------------------------------------- |
+| **Base Image**   | <!-- e.g., node:18-alpine, python:3.11-slim --> |
+| **Exposed Port** | <!-- e.g., 8080 -->                             |
+| **Health Check** | `<!-- health check command -->`                 |
+| **User**         | `<!-- non-root user -->`                        |
+
+### 7.2 Resource Requirements
+
+| Environment | CPU Request | CPU Limit | Memory Request | Memory Limit | Replicas |
+| ----------- | ----------- | --------- | -------------- | ------------ | -------- |
+| Development | 100m        | 500m      | 128Mi          | 512Mi        | 1        |
+| Staging     | 250m        | 1000m     | 256Mi          | 1Gi          | 2        |
+| Production  | 500m        | 2000m     | 512Mi          | 2Gi          | 3-10     |
+
+### 7.3 Deployment Topology
+
+```
+<!-- ASCII diagram showing:
+     - Load balancer
+     - Service replicas
+     - Database connections
+     - Message broker connections
+     - External service connections -->
+```
+
+### 7.4 Azure Container Apps Configuration
+
+```yaml
+# container-app.yaml
+properties:
+  configuration:
+    activeRevisionsMode: Multiple
+    ingress:
+      external: true
+      targetPort: <!-- port -->
+      traffic:
+        - latestRevision: true
+          weight: 100
+    dapr:
+      enabled: true
+      appId: <!-- service-name -->
+      appPort: <!-- port -->
+      appProtocol: http
+  template:
+    containers:
+      - name: <!-- service-name -->
+        image: <!-- image -->
+        resources:
+          cpu: <!-- cpu -->
+          memory: <!-- memory -->
+        env:
+          - name: <!-- var -->
+            value: <!-- value -->
+    scale:
+      minReplicas: <!-- min -->
+      maxReplicas: <!-- max -->
+      rules:
+        - name: http-scaling
+          http:
+            metadata:
+              concurrentRequests: '100'
+```
+
+### 7.5 CI/CD Pipeline
+
+| Stage             | Trigger         | Actions                   | Duration |
+| ----------------- | --------------- | ------------------------- | -------- |
+| Build             | Push to main/PR | Lint, Test, Build image   | ~5 min   |
+| Security Scan     | After Build     | Container scan, SAST      | ~3 min   |
+| Deploy to Dev     | Merge to main   | Deploy to dev environment | ~2 min   |
+| Deploy to Staging | Manual approval | Deploy to staging         | ~2 min   |
+| Deploy to Prod    | Manual approval | Blue-green deployment     | ~5 min   |
+
+### 7.6 Rollback Procedure
+
+1. Identify failed deployment via monitoring alerts
+2. Execute rollback command: `az containerapp revision activate --name <!-- service --> --revision <!-- previous-revision -->`
+3. Verify health checks pass
+4. Investigate root cause
+5. Document in incident report
+
+---
+
+## 8. Observability
+
+Comprehensive monitoring and observability following the three pillars: logs, metrics, and traces.
+
+### 8.1 Logging Strategy
+
+#### 8.1.1 Log Levels
+
+| Level   | Usage                                              | Example                                           |
+| ------- | -------------------------------------------------- | ------------------------------------------------- |
+| `ERROR` | System errors requiring immediate attention        | Database connection failure, unhandled exceptions |
+| `WARN`  | Unexpected conditions that don't prevent operation | Deprecated API usage, retry attempts              |
+| `INFO`  | Significant business events                        | Request received, order created, user logged in   |
+| `DEBUG` | Detailed diagnostic information                    | Method entry/exit, variable values                |
+| `TRACE` | Fine-grained debugging (disabled in production)    | Full request/response payloads                    |
+
+#### 8.1.2 Structured Log Format
+
+All services MUST use structured JSON logging:
+
+```json
+{
+  "timestamp": "2025-01-15T10:30:45.123Z",
+  "level": "INFO",
+  "service": "<!-- service-name -->",
+  "version": "<!-- service-version -->",
+  "environment": "production",
+  "correlationId": "<!-- uuid -->",
+  "traceId": "<!-- opentelemetry-trace-id -->",
+  "spanId": "<!-- opentelemetry-span-id -->",
+  "userId": "<!-- authenticated-user-id -->",
+  "operation": "<!-- operation-name -->",
+  "message": "<!-- human-readable-message -->",
+  "duration": 45,
+  "metadata": {
+    "<!-- context-specific-fields -->"
+  },
+  "error": {
+    "code": "<!-- error-code -->",
+    "message": "<!-- error-message -->",
+    "stack": "<!-- stack-trace-if-error -->"
+  }
+}
+```
+
+#### 8.1.3 Environment-Specific Logging
+
+| Environment | Level                        | Stack Traces                | Request Bodies | Retention |
+| ----------- | ---------------------------- | --------------------------- | -------------- | --------- |
+| Development | DEBUG                        | Full                        | Yes            | 7 days    |
+| Staging     | INFO                         | Summarized (top 5 frames)   | Metadata only  | 30 days   |
+| Production  | INFO (WARN for high-traffic) | Error tracking service only | No             | 90 days   |
+
+### 8.2 Metrics Collection
+
+#### 8.2.1 Required Metrics
+
+| Metric Name                     | Type      | Description                 | Labels                      |
+| ------------------------------- | --------- | --------------------------- | --------------------------- |
+| `http_requests_total`           | Counter   | Total HTTP requests         | method, path, status        |
+| `http_request_duration_seconds` | Histogram | Request latency             | method, path                |
+| `http_requests_in_flight`       | Gauge     | Current active requests     | -                           |
+| `db_query_duration_seconds`     | Histogram | Database query latency      | operation, collection/table |
+| `db_connections_active`         | Gauge     | Active database connections | -                           |
+| `events_published_total`        | Counter   | Events published            | event_type, status          |
+| `events_consumed_total`         | Counter   | Events consumed             | event_type, status          |
+| `cache_hits_total`              | Counter   | Cache hit count             | cache_name                  |
+| `cache_misses_total`            | Counter   | Cache miss count            | cache_name                  |
+
+#### 8.2.2 Metrics Endpoint
+
+```yaml
+# Prometheus scrape configuration
+endpoint: /metrics
+port: <!-- metrics-port -->
+interval: 15s
+```
+
+### 8.3 Distributed Tracing
+
+#### 8.3.1 OpenTelemetry Configuration
+
+```yaml
+# OpenTelemetry SDK configuration
+OTEL_SERVICE_NAME: '<!-- service-name -->'
+OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4318'
+OTEL_TRACES_SAMPLER: 'parentbased_traceidratio'
+OTEL_TRACES_SAMPLER_ARG: '0.1' # 10% sampling in production
+```
+
+#### 8.3.2 Span Attributes
+
+All spans MUST include:
+
+| Attribute                | Description                    |
+| ------------------------ | ------------------------------ |
+| `service.name`           | Service identifier             |
+| `service.version`        | Service version                |
+| `deployment.environment` | Environment (dev/staging/prod) |
+| `http.method`            | HTTP method                    |
+| `http.url`               | Full URL (sanitized)           |
+| `http.status_code`       | Response status code           |
+| `db.system`              | Database type                  |
+| `db.operation`           | Database operation             |
+| `messaging.system`       | Message broker type            |
+| `messaging.operation`    | publish/consume                |
+
+### 8.4 Health Checks
+
+#### 8.4.1 Liveness Probe
+
+```http
+GET /health/live
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "status": "healthy",
+  "service": "<!-- service-name -->",
+  "timestamp": "2025-01-15T10:30:45.123Z"
+}
+```
+
+**Purpose:** Indicates if the service process is running. Kubernetes restarts the pod if this fails.
+
+#### 8.4.2 Readiness Probe
+
+```http
+GET /health/ready
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "status": "ready",
+  "service": "<!-- service-name -->",
+  "timestamp": "2025-01-15T10:30:45.123Z",
+  "dependencies": {
+    "database": {
+      "status": "connected",
+      "responseTime": "5ms"
+    },
+    "messagebroker": {
+      "status": "connected",
+      "responseTime": "3ms"
+    },
+    "cache": {
+      "status": "connected",
+      "responseTime": "1ms"
+    }
+  }
+}
+```
+
+**Response (503 Service Unavailable):**
+
+```json
+{
+  "status": "not-ready",
+  "service": "<!-- service-name -->",
+  "timestamp": "2025-01-15T10:30:45.123Z",
+  "dependencies": {
+    "database": {
+      "status": "disconnected",
+      "error": "Connection timeout after 5000ms"
+    }
+  },
+  "reason": "Database connection unavailable"
+}
+```
+
+**Purpose:** Indicates if the service can handle traffic. Kubernetes removes from load balancer if this fails.
+
+### 8.5 Alerting Rules
+
+| Alert                       | Condition                         | Severity | Action                                     |
+| --------------------------- | --------------------------------- | -------- | ------------------------------------------ |
+| HighErrorRate               | Error rate > 5% for 5 minutes     | Critical | Page on-call, investigate immediately      |
+| HighLatency                 | P95 latency > 500ms for 5 minutes | Warning  | Investigate performance degradation        |
+| ServiceDown                 | Health check fails for 2 minutes  | Critical | Auto-restart, page if persists             |
+| DatabaseConnectionExhausted | Connection pool > 90%             | Warning  | Scale database or optimize queries         |
+| EventProcessingLag          | Consumer lag > 1000 messages      | Warning  | Scale consumers or investigate bottleneck  |
+| MemoryPressure              | Memory usage > 85%                | Warning  | Investigate memory leaks, consider scaling |
+| DiskSpaceLow                | Disk usage > 80%                  | Warning  | Clean up logs, expand storage              |
+
+### 8.6 Dashboard Requirements
+
+Each service MUST have a Grafana dashboard displaying:
+
+1. **Overview Panel:** Request rate, error rate, latency percentiles
+2. **Dependencies Panel:** Database, cache, message broker health
+3. **Business Metrics Panel:** Service-specific KPIs
+4. **Resource Usage Panel:** CPU, memory, network I/O
+5. **Events Panel:** Published/consumed events, processing lag
+
+---
+
+## 9. Error Handling
+
+Comprehensive error handling strategy ensuring consistent behavior across all services.
+
+### 9.1 Error Categories
+
+| Category              | HTTP Range | Handling Strategy                   | User Impact                   |
+| --------------------- | ---------- | ----------------------------------- | ----------------------------- |
+| Validation Errors     | 400-422    | Return immediately with details     | Clear feedback, fix and retry |
+| Authentication Errors | 401        | Clear auth state, redirect to login | Re-authenticate               |
+| Authorization Errors  | 403        | Log, do not retry                   | Contact admin for permissions |
+| Resource Not Found    | 404        | Return gracefully                   | Redirect or show not found    |
+| Conflict Errors       | 409        | Return conflict details             | Resolve conflict, retry       |
+| Rate Limit Errors     | 429        | Return retry-after header           | Wait and retry                |
+| Server Errors         | 500-503    | Log, retry with backoff             | Show error, auto-retry        |
+| Timeout Errors        | 504        | Retry with backoff                  | Show loading, auto-retry      |
+
+### 9.2 Circuit Breaker Pattern
+
+Implement circuit breakers for all external dependencies:
+
+```yaml
+# Circuit breaker configuration
+circuitBreaker:
+  <!-- dependency-name -->:
+    failureThreshold: 5 # Failures before opening
+    successThreshold: 3 # Successes before closing
+    timeout: 30s # Time before half-open
+    requestVolumeThreshold: 10 # Minimum requests before evaluation
+```
+
+**States:**
+
+- **Closed:** Normal operation, failures counted
+- **Open:** All requests fail fast, return cached/fallback response
+- **Half-Open:** Limited requests allowed to test recovery
+
+### 9.3 Retry Policies
+
+| Operation Type | Max Retries | Initial Delay | Max Delay | Backoff                 |
+| -------------- | ----------- | ------------- | --------- | ----------------------- |
+| Database read  | 3           | 100ms         | 1s        | Exponential             |
+| Database write | 2           | 200ms         | 2s        | Exponential             |
+| External API   | 3           | 500ms         | 5s        | Exponential with jitter |
+| Event publish  | 3           | 1s            | 10s       | Exponential             |
+| Event consume  | 5           | 1s            | 30s       | Exponential             |
+
+**Retry Formula:**
+
+```
+delay = min(initialDelay * (2 ^ attempt) + jitter, maxDelay)
+```
+
+### 9.4 Graceful Degradation
+
+| Dependency       | Degradation Strategy       | Fallback Behavior              |
+| ---------------- | -------------------------- | ------------------------------ |
+| Database (read)  | Return cached data         | Serve stale data with warning  |
+| Database (write) | Queue for retry            | Return accepted, process async |
+| Cache            | Bypass cache               | Query database directly        |
+| External API     | Return default/cached      | Use fallback data              |
+| Message broker   | Write to dead letter queue | Log and alert                  |
+
+### 9.5 Error Logging Requirements
+
+All errors MUST be logged with:
+
+```json
+{
+  "level": "ERROR",
+  "correlationId": "<!-- correlation-id -->",
+  "error": {
+    "code": "<!-- error-code -->",
+    "category": "<!-- validation/authentication/server/etc -->",
+    "message": "<!-- error-message -->",
+    "stack": "<!-- stack-trace -->",
+    "context": {
+      "operation": "<!-- what-was-being-done -->",
+      "input": "<!-- sanitized-input -->",
+      "userId": "<!-- user-id-if-available -->"
+    }
+  },
+  "recovery": {
+    "attempted": true,
+    "strategy": "<!-- retry/circuit-breaker/fallback -->",
+    "outcome": "<!-- success/failed -->"
+  }
+}
+```
+
+### 9.6 Dead Letter Queue (DLQ)
+
+Failed events MUST be routed to DLQ:
+
+```yaml
+# Dapr DLQ configuration
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: <!-- service -->-dlq
+spec:
+  type: pubsub.rabbitmq
+  metadata:
+    - name: host
+      value: 'amqp://rabbitmq:5672'
+    - name: durable
+      value: 'true'
+    - name: deletedWhenUnused
+      value: 'false'
+```
+
+**DLQ Processing Requirements:**
+
+1. Monitor DLQ depth via metrics
+2. Alert if DLQ grows beyond threshold
+3. Provide admin UI for DLQ inspection
+4. Support manual replay of failed events
+5. Retain DLQ messages for 7 days minimum
+
+---
+
+## 10. Security
+
+Security controls and practices implemented in the service.
+
+### 10.1 Authentication
+
+#### 10.1.1 JWT Validation
+
+```yaml
+# JWT configuration
+jwt:
+  issuer: '<!-- issuer-url -->'
+  audience: '<!-- expected-audience -->'
+  algorithm: 'RS256'
+  publicKeyUrl: '<!-- jwks-url -->'
+  clockSkew: 30s # Allow for clock drift
+```
+
+**Required JWT Claims:**
+| Claim | Description | Validation |
+|-------|-------------|------------|
+| `sub` | Subject (user ID) | Required, non-empty |
+| `iat` | Issued at | Required, not in future |
+| `exp` | Expiration | Required, not expired |
+| `aud` | Audience | Must match service audience |
+| `iss` | Issuer | Must match configured issuer |
+| `roles` | User roles | Optional, defaults to empty |
+
+#### 10.1.2 Service-to-Service Authentication
+
+```yaml
+# Dapr mTLS (enabled by default)
+# Services authenticate via Dapr sidecar certificates
+```
+
+### 10.2 Authorization (RBAC)
+
+#### 10.2.1 Role Definitions
+
+| Role      | Description                 | Typical Users            |
+| --------- | --------------------------- | ------------------------ |
+| `admin`   | Full system access          | Platform administrators  |
+| `service` | Service-to-service calls    | Internal services        |
+| `user`    | Standard authenticated user | Customers                |
+| `guest`   | Limited read-only access    | Unauthenticated visitors |
+
+#### 10.2.2 Permission Matrix
+
+| Operation        | admin | service | user | guest |
+| ---------------- | ----- | ------- | ---- | ----- |
+| Read own data    | ✅    | ✅      | ✅   | ❌    |
+| Read any data    | ✅    | ✅      | ❌   | ❌    |
+| Create           | ✅    | ✅      | ✅   | ❌    |
+| Update own       | ✅    | ✅      | ✅   | ❌    |
+| Update any       | ✅    | ✅      | ❌   | ❌    |
+| Delete own       | ✅    | ✅      | ✅   | ❌    |
+| Delete any       | ✅    | ❌      | ❌   | ❌    |
+| Admin operations | ✅    | ❌      | ❌   | ❌    |
+
+### 10.3 Data Protection
+
+#### 10.3.1 Data at Rest
+
+| Data Type | Encryption          | Key Management            |
+| --------- | ------------------- | ------------------------- |
+| Database  | AES-256 (TDE)       | Azure Key Vault / AWS KMS |
+| Secrets   | AES-256             | Dapr Secret Store         |
+| Backups   | AES-256             | Managed encryption keys   |
+| Logs      | Platform encryption | Managed by log aggregator |
+
+#### 10.3.2 Data in Transit
+
+| Channel            | Protection    | Configuration             |
+| ------------------ | ------------- | ------------------------- |
+| External HTTPS     | TLS 1.3       | Minimum TLS 1.2           |
+| Service-to-Service | mTLS via Dapr | Auto-rotated certificates |
+| Database           | TLS           | Require SSL connection    |
+| Message Broker     | TLS           | Encrypted channels        |
+
+#### 10.3.3 Sensitive Data Handling
+
+| Data Category | Handling            | Storage                  | Logging           |
+| ------------- | ------------------- | ------------------------ | ----------------- |
+| Passwords     | Never stored plain  | Bcrypt hash (cost 12+)   | Never log         |
+| API Keys      | Encrypted           | Secret store only        | Never log         |
+| PII           | Minimize collection | Encrypted, access logged | Mask in logs      |
+| Payment Data  | Not stored          | PCI-compliant provider   | Never log         |
+| Tokens        | Short-lived         | Memory only              | Last 4 chars only |
+
+### 10.4 Input Validation
+
+#### 10.4.1 Validation Requirements
+
+All inputs MUST be validated:
+
+| Input Type | Validation                        | Example                           |
+| ---------- | --------------------------------- | --------------------------------- |
+| String     | Max length, allowed characters    | Name: 1-100 chars, alphanumeric   |
+| Email      | RFC 5322 format                   | regex validation                  |
+| URL        | Valid URL format, allowed schemes | https only for external           |
+| Numeric    | Range, precision                  | Price: 0-999999.99                |
+| Date       | ISO 8601 format, reasonable range | Not before 1900, not after 2100   |
+| ID         | Format validation                 | MongoDB ObjectId, UUID v4         |
+| Enum       | Allowed values only               | Status: active, inactive, deleted |
+
+#### 10.4.2 Sanitization
+
+```
+1. Remove/escape HTML tags (prevent XSS)
+2. Remove SQL injection patterns
+3. Remove NoSQL injection patterns ($ operators)
+4. Trim whitespace
+5. Normalize Unicode
+6. Reject null bytes
+```
+
+### 10.5 Rate Limiting
+
+| Endpoint Category  | Limit         | Window   | Behavior          |
+| ------------------ | ------------- | -------- | ----------------- |
+| Authentication     | 5 requests    | 1 minute | 429 + lockout     |
+| Public read        | 100 requests  | 1 minute | 429 + retry-after |
+| Authenticated read | 1000 requests | 1 minute | 429 + retry-after |
+| Write operations   | 100 requests  | 1 minute | 429 + retry-after |
+| Admin operations   | 500 requests  | 1 minute | 429 + retry-after |
+
+### 10.6 Security Headers
+
+All responses MUST include:
+
+```http
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Content-Security-Policy: default-src 'self'
+Cache-Control: no-store (for sensitive data)
+```
+
+### 10.7 Secrets Management
+
+#### 10.7.1 Secret Sources
+
+```yaml
+# Priority order for secret resolution
+1. Dapr Secret Store (Azure Key Vault / Kubernetes Secrets)
+2. Environment variables (for local development only)
+
+# Never:
+- Hardcode secrets in source code
+- Commit secrets to version control
+- Log secret values
+- Pass secrets in URLs
+```
+
+#### 10.7.2 Secret Rotation
+
+| Secret Type            | Rotation Frequency | Automation                      |
+| ---------------------- | ------------------ | ------------------------------- |
+| Database credentials   | 90 days            | Automated via Key Vault         |
+| API keys               | 90 days            | Manual with notification        |
+| JWT signing keys       | 180 days           | Automated, support key rollover |
+| Service account tokens | 30 days            | Automated via managed identity  |
 
 ---
 
 ## Appendix
 
-### A. Glossary
+### A. Scalability Considerations
 
-| Term | Definition |
-|------|------------|
-| <!-- term --> | <!-- definition --> |
+#### A.1 Performance Targets
 
-### B. Related Documents
+| Metric                  | Target       | Measurement                  |
+| ----------------------- | ------------ | ---------------------------- |
+| API Response Time (P50) | < 100ms      | Prometheus histogram         |
+| API Response Time (P95) | < 200ms      | Prometheus histogram         |
+| API Response Time (P99) | < 500ms      | Prometheus histogram         |
+| Throughput              | > 1000 req/s | Load testing                 |
+| Error Rate              | < 0.1%       | Error count / total requests |
+| Availability            | 99.9%        | Uptime monitoring            |
 
-| Document | Link |
-|----------|------|
-| PRD | <!-- link --> |
-| API Specification | <!-- link --> |
-| Runbook | <!-- link --> |
+#### A.2 Scaling Strategy
 
-### C. Revision History
+| Trigger       | Threshold       | Action               |
+| ------------- | --------------- | -------------------- |
+| CPU Usage     | > 70% for 5 min | Scale out +1 replica |
+| Memory Usage  | > 80% for 5 min | Scale out +1 replica |
+| Request Queue | > 100 pending   | Scale out +1 replica |
+| Min Replicas  | Always          | 2 (for HA)           |
+| Max Replicas  | Limit           | 10 (cost control)    |
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| <!-- version --> | <!-- date --> | <!-- author --> | <!-- changes --> |
+#### A.3 Database Scaling
+
+- **Read scaling:** Read replicas for query-heavy operations
+- **Write scaling:** Vertical scaling, eventual sharding if needed
+- **Connection pooling:** Min 5, Max 20 per instance
+
+### B. Disaster Recovery
+
+#### B.1 Backup Strategy
+
+| Data          | Frequency                      | Retention       | Location              |
+| ------------- | ------------------------------ | --------------- | --------------------- |
+| Database      | Daily full, hourly incremental | 30 days         | Geo-redundant storage |
+| Configuration | On change                      | 90 days         | Git repository        |
+| Secrets       | On change                      | Version history | Key Vault             |
+| Logs          | Real-time                      | 90 days         | Log aggregator        |
+
+#### B.2 Recovery Objectives
+
+| Scenario           | RTO        | RPO                            |
+| ------------------ | ---------- | ------------------------------ |
+| Single pod failure | 30 seconds | 0 (no data loss)               |
+| Node failure       | 2 minutes  | 0 (no data loss)               |
+| Zone failure       | 5 minutes  | < 1 minute                     |
+| Region failure     | 1 hour     | < 5 minutes                    |
+| Data corruption    | 4 hours    | < 1 hour (restore from backup) |
+
+#### B.3 Recovery Procedures
+
+| Scenario          | Procedure                                         |
+| ----------------- | ------------------------------------------------- |
+| Pod crash         | Automatic restart by Kubernetes                   |
+| Node failure      | Automatic rescheduling by Kubernetes              |
+| Database failover | Automatic via managed service                     |
+| Data restore      | See runbook: `docs/runbooks/disaster-recovery.md` |
+
+### C. Architecture Decision Records (ADRs)
+
+#### ADR Template
+
+```markdown
+# ADR-XXX: <!-- Title -->
+
+## Status
+
+<!-- Proposed | Accepted | Deprecated | Superseded by ADR-YYY -->
+
+## Context
+
+<!-- What is the issue that we're seeing that is motivating this decision? -->
+
+## Decision
+
+<!-- What is the change that we're proposing and/or doing? -->
+
+## Consequences
+
+<!-- What becomes easier or more difficult to do because of this change? -->
+
+### Positive
+
+<!-- Benefits of this decision -->
+
+### Negative
+
+<!-- Drawbacks and risks -->
+
+### Neutral
+
+<!-- Other impacts -->
+
+## Date
+
+<!-- YYYY-MM-DD -->
+
+## Authors
+
+<!-- Who made this decision -->
+```
+
+#### ADR Index
+
+| ID      | Title          | Status          | Date          |
+| ------- | -------------- | --------------- | ------------- |
+| ADR-001 | <!-- title --> | <!-- status --> | <!-- date --> |
+
+### D. Glossary
+
+| Term        | Definition                                                      |
+| ----------- | --------------------------------------------------------------- |
+| BFF         | Backend for Frontend - API gateway pattern for specific clients |
+| CloudEvents | Specification for describing event data in a common way         |
+| Dapr        | Distributed Application Runtime - sidecar for microservices     |
+| DLQ         | Dead Letter Queue - storage for failed messages                 |
+| mTLS        | Mutual TLS - two-way certificate authentication                 |
+| OTEL        | OpenTelemetry - observability framework                         |
+| P95/P99     | 95th/99th percentile response time                              |
+| RTO         | Recovery Time Objective - max acceptable downtime               |
+| RPO         | Recovery Point Objective - max acceptable data loss             |
+
+### E. Related Documents
+
+| Document             | Description                   | Location                          |
+| -------------------- | ----------------------------- | --------------------------------- |
+| PRD                  | Product Requirements Document | `docs/PRD.md`                     |
+| API Specification    | OpenAPI/Swagger documentation | `docs/API.md` or `/api/docs`      |
+| Runbooks             | Operational procedures        | `docs/runbooks/`                  |
+| Copilot Instructions | AI assistant guidelines       | `.github/copilot-instructions.md` |
+| Infrastructure       | Deployment configurations     | `infrastructure/`                 |
+
+### F. Revision History
+
+| Version          | Date          | Author          | Changes                       |
+| ---------------- | ------------- | --------------- | ----------------------------- |
+| 1.0              | <!-- date --> | <!-- author --> | Initial architecture document |
+| <!-- version --> | <!-- date --> | <!-- author --> | <!-- changes -->              |
