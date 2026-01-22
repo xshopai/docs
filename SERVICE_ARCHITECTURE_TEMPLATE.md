@@ -1,47 +1,5 @@
 # Service Architecture Document Template
 
-## [Service Name] - xshopai Platform
-
-# <!--
-
-# TEMPLATE INSTRUCTIONS (Delete this block when filling in)
-
-This is the master architecture template for all xshopai microservices.
-
-HOW TO USE:
-
-1. Copy this template to your service's docs/ folder
-2. Replace [Service Name] in the title with your actual service name
-3. Fill in all sections marked with <!-- REQUIRED --> (mandatory)
-4. Fill in sections marked with <!-- RECOMMENDED --> if applicable
-5. Delete all instruction comments when done
-
-TECH STACK OPTIONS (choose one per service):
-
-- Python 3.11+ / FastAPI (product-service, inventory-service)
-- Node.js 18+ / Express 5.x (user-service, auth-service, admin-service, audit-service, notification-service, chat-service, review-service, web-bff)
-- Java 17+ / Quarkus (cart-service, order-processor-service)
-- .NET 8 / ASP.NET Core (order-service, payment-service)
-- React 18 / Vite (admin-ui, customer-ui)
-
-MESSAGING:
-
-- All services use Dapr Pub/Sub with RabbitMQ backend
-- Event format: CloudEvents 1.0 specification
-
-PRD REFERENCE:
-
-- Link your PRD in Section 1.5 References
-- # Use PRD section numbers when describing requirements
-  -->
-
-**Version:** 1.0  
-**Last Updated:** <!-- YYYY-MM-DD -->  
-**Status:** <!-- Draft | Review | Approved -->  
-**Owner:** xshopai Platform Team
-
----
-
 ## Table of Contents
 
 1. [Overview](#1-overview)
@@ -55,53 +13,62 @@ PRD REFERENCE:
    - 2.2 [External Interfaces](#22-external-interfaces)
    - 2.3 [Dependencies](#23-dependencies)
 3. [Data Architecture](#3-data-architecture)
-   - 3.1 [Data Model Overview](#31-data-model-overview)
-   - 3.2 [Entity Definitions](#32-entity-definitions)
-   - 3.3 [Indexes](#33-indexes)
+   - 3.1 [Database Selection](#31-database-selection)
+   - 3.2 [Data Model](#32-data-model)
+   - 3.3 [Data Patterns](#33-data-patterns)
    - 3.4 [Caching Strategy](#34-caching-strategy)
+   - 3.5 [Data Migration Strategy](#35-data-migration-strategy)
 4. [API Design](#4-api-design)
    - 4.1 [API Overview](#41-api-overview)
    - 4.2 [Endpoint Summary](#42-endpoint-summary)
-   - 4.3 [Request/Response Patterns](#43-requestresponse-patterns)
-   - 4.4 [Error Code Catalog](#44-error-code-catalog)
-   - 4.5 [Rate Limiting](#45-rate-limiting)
+   - 4.3 [Endpoints](#43-endpoints)
 5. [Event Architecture](#5-event-architecture)
    - 5.1 [Event Overview](#51-event-overview)
-   - 5.2 [Published Events](#52-published-events)
-   - 5.3 [Consumed Events](#53-consumed-events)
-   - 5.4 [CloudEvents Envelope](#54-cloudevents-envelope)
-   - 5.5 [Dapr Configuration](#55-dapr-configuration)
-   - 5.6 [Idempotency & Dead Letter Handling](#56-idempotency--dead-letter-handling)
+   - 5.2 [Event Summary](#52-event-summary)
+   - 5.3 [Published Events](#53-published-events)
+   - 5.4 [Consumed Events](#54-consumed-events)
+   - 5.5 [CloudEvents Envelope](#55-cloudevents-envelope)
+   - 5.6 [Dapr Configuration](#56-dapr-configuration)
+   - 5.7 [Event Processing Patterns](#57-event-processing-patterns)
+   - 5.8 [Event Monitoring](#58-event-monitoring)
 6. [Configuration](#6-configuration)
    - 6.1 [Environment Variables](#61-environment-variables)
-   - 6.2 [Secrets Management](#62-secrets-management)
-   - 6.3 [Feature Flags](#63-feature-flags)
+   - 6.2 [Configuration Files](#62-configuration-files)
+   - 6.3 [Secrets Management](#63-secrets-management)
+   - 6.4 [Feature Flags](#64-feature-flags)
+   - 6.5 [Configuration Validation](#65-configuration-validation)
 7. [Deployment](#7-deployment)
    - 7.1 [Container Configuration](#71-container-configuration)
-   - 7.2 [Deployment Topology](#72-deployment-topology)
-   - 7.3 [CI/CD Pipeline](#73-cicd-pipeline)
-   - 7.4 [Scaling Strategy](#74-scaling-strategy)
+   - 7.2 [Resource Requirements](#72-resource-requirements)
+   - 7.3 [Deployment Topology](#73-deployment-topology)
+   - 7.4 [Azure Container Apps Configuration](#74-azure-container-apps-configuration)
+   - 7.5 [CI/CD Pipeline](#75-cicd-pipeline)
+   - 7.6 [Rollback Procedure](#76-rollback-procedure)
 8. [Observability](#8-observability)
-   - 8.1 [Logging](#81-logging)
-   - 8.2 [Metrics](#82-metrics)
+   - 8.1 [Logging Strategy](#81-logging-strategy)
+   - 8.2 [Metrics Collection](#82-metrics-collection)
    - 8.3 [Distributed Tracing](#83-distributed-tracing)
    - 8.4 [Health Checks](#84-health-checks)
    - 8.5 [Alerting Rules](#85-alerting-rules)
+   - 8.6 [Dashboard Requirements](#86-dashboard-requirements)
 9. [Error Handling](#9-error-handling)
-   - 9.1 [Error Response Format](#91-error-response-format)
-   - 9.2 [Exception Handling Patterns](#92-exception-handling-patterns)
-   - 9.3 [Correlation ID Flow](#93-correlation-id-flow)
-   - 9.4 [Retry & Circuit Breaker](#94-retry--circuit-breaker)
+   - 9.1 [Error Categories](#91-error-categories)
+   - 9.2 [Circuit Breaker Pattern](#92-circuit-breaker-pattern)
+   - 9.3 [Retry Policies](#93-retry-policies)
+   - 9.4 [Graceful Degradation](#94-graceful-degradation)
+   - 9.5 [Error Logging Requirements](#95-error-logging-requirements)
+   - 9.6 [Dead Letter Queue (DLQ)](#96-dead-letter-queue-dlq)
 10. [Security](#10-security)
     - 10.1 [Authentication](#101-authentication)
-    - 10.2 [Authorization](#102-authorization)
+    - 10.2 [Authorization (RBAC)](#102-authorization-rbac)
     - 10.3 [Data Protection](#103-data-protection)
     - 10.4 [Input Validation](#104-input-validation)
+    - 10.5 [Rate Limiting](#105-rate-limiting)
+    - 10.6 [Security Headers](#106-security-headers)
+    - 10.7 [Secrets Management](#107-secrets-management)
 11. [Appendix](#11-appendix)
-    - A. [Quick Reference](#a-quick-reference)
-    - B. [Architecture Decision Records](#b-architecture-decision-records)
-    - C. [Glossary](#c-glossary)
-    - D. [Revision History](#d-revision-history)
+    - A. [Glossary](#a-glossary)
+    - B. [Related Documents](#b-related-documents)
 
 ---
 
@@ -666,18 +633,30 @@ Coding agents use this for:
      - Connected services -->
 ```
 
-### 5.2 Published Events
+### 5.2 Event Summary
+
+#### 5.2.1 Published Events
+
+| Event Type                         | Topic                 | Trigger                 | Consumers                           |
+| ---------------------------------- | --------------------- | ----------------------- | ----------------------------------- |
+| `<!-- service -->.<!-- action -->` | `<!-- topic-name -->` | <!-- When triggered --> | <!-- List of consuming services --> |
+
+#### 5.2.2 Consumed Events
+
+| Event Type                        | Source                  | Handler                 | Idempotency Key      |
+| --------------------------------- | ----------------------- | ----------------------- | -------------------- |
+| `<!-- source -->.<!-- action -->` | <!-- source-service --> | `<!-- handler-path -->` | `<!-- key-field -->` |
+
+---
+
+### 5.3 Published Events
 
 <!--
 Document ALL events this service publishes.
 Include trigger conditions and full payload schemas.
 -->
 
-| Event Type                         | Topic                 | Trigger                 | Consumers                           |
-| ---------------------------------- | --------------------- | ----------------------- | ----------------------------------- |
-| `<!-- service -->.<!-- action -->` | `<!-- topic-name -->` | <!-- When triggered --> | <!-- List of consuming services --> |
-
-#### 5.2.1 <!-- Event Name --> Event
+#### 5.3.1 <!-- Event Name --> Event
 
 **Trigger:** <!-- When this event is published -->
 
@@ -699,18 +678,14 @@ Include trigger conditions and full payload schemas.
 }
 ```
 
-### 5.3 Consumed Events
+### 5.4 Consumed Events
 
 <!--
 Document ALL events this service consumes.
 Include handler location and processing logic.
 -->
 
-| Event Type                        | Source                  | Handler                 | Idempotency Key      |
-| --------------------------------- | ----------------------- | ----------------------- | -------------------- |
-| `<!-- source -->.<!-- action -->` | <!-- source-service --> | `<!-- handler-path -->` | `<!-- key-field -->` |
-
-#### 5.3.1 <!-- Event Name --> Handler
+#### 5.4.1 <!-- Event Name --> Handler
 
 **Source Service:** <!-- Which service publishes this -->
 
@@ -724,7 +699,7 @@ Include handler location and processing logic.
 
 **Idempotency Strategy:** <!-- How duplicates are handled -->
 
-### 5.4 CloudEvents Envelope
+### 5.5 CloudEvents Envelope
 
 <!--
 CRITICAL: All events MUST follow CloudEvents 1.0 specification.
@@ -753,9 +728,9 @@ This envelope structure is used by ALL xshopai services.
 
 - Examples: `user.created`, `order.completed`, `inventory.reserved`
 
-### 5.5 Dapr Configuration
+### 5.6 Dapr Configuration
 
-#### 5.5.1 Pub/Sub Component
+#### 5.6.1 Pub/Sub Component
 
 **File:** `dapr/components/pubsub.yaml`
 
@@ -785,7 +760,7 @@ spec:
       value: '10'
 ```
 
-#### 5.5.2 Subscription Configuration
+#### 5.6.2 Subscription Configuration
 
 **File:** `dapr/components/subscription.yaml`
 
@@ -802,34 +777,19 @@ spec:
   deadLetterTopic: <!-- topic-name -->-dlq
 ```
 
-### 5.6 Event Processing Patterns
+### 5.7 Event Processing Patterns
 
-#### 5.6.1 Publisher Pattern
-
-```
-<!-- Language-specific example based on service tech stack -->
-```
-
-#### 5.6.2 Consumer Pattern
+#### 5.7.1 Publisher Pattern
 
 ```
 <!-- Language-specific example based on service tech stack -->
 ```
 
-### 5.7 Error Handling & Retry
+#### 5.7.2 Consumer Pattern
 
-| Error Type                   | Retry Strategy      | Max Attempts | Backoff             |
-| ---------------------------- | ------------------- | ------------ | ------------------- |
-| Transient (network, timeout) | Exponential backoff | 5            | 1s, 2s, 4s, 8s, 16s |
-| Business logic error         | No retry            | 1            | N/A                 |
-| Invalid message format       | Dead letter         | 1            | N/A                 |
-| Handler exception            | Linear backoff      | 3            | 5s, 10s, 15s        |
-
-**Dead Letter Queue:** `<!-- topic -->-dlq`
-
-- Messages moved after max retries exhausted
-- Manual intervention required for DLQ processing
-- Alert triggered when DLQ depth > threshold
+```
+<!-- Language-specific example based on service tech stack -->
+```
 
 ### 5.8 Event Monitoring
 
@@ -1526,118 +1486,9 @@ Cache-Control: no-store (for sensitive data)
 
 ---
 
-## Appendix
+## 11. Appendix
 
-### A. Scalability Considerations
-
-#### A.1 Performance Targets
-
-| Metric                  | Target       | Measurement                  |
-| ----------------------- | ------------ | ---------------------------- |
-| API Response Time (P50) | < 100ms      | Prometheus histogram         |
-| API Response Time (P95) | < 200ms      | Prometheus histogram         |
-| API Response Time (P99) | < 500ms      | Prometheus histogram         |
-| Throughput              | > 1000 req/s | Load testing                 |
-| Error Rate              | < 0.1%       | Error count / total requests |
-| Availability            | 99.9%        | Uptime monitoring            |
-
-#### A.2 Scaling Strategy
-
-| Trigger       | Threshold       | Action               |
-| ------------- | --------------- | -------------------- |
-| CPU Usage     | > 70% for 5 min | Scale out +1 replica |
-| Memory Usage  | > 80% for 5 min | Scale out +1 replica |
-| Request Queue | > 100 pending   | Scale out +1 replica |
-| Min Replicas  | Always          | 2 (for HA)           |
-| Max Replicas  | Limit           | 10 (cost control)    |
-
-#### A.3 Database Scaling
-
-- **Read scaling:** Read replicas for query-heavy operations
-- **Write scaling:** Vertical scaling, eventual sharding if needed
-- **Connection pooling:** Min 5, Max 20 per instance
-
-### B. Disaster Recovery
-
-#### B.1 Backup Strategy
-
-| Data          | Frequency                      | Retention       | Location              |
-| ------------- | ------------------------------ | --------------- | --------------------- |
-| Database      | Daily full, hourly incremental | 30 days         | Geo-redundant storage |
-| Configuration | On change                      | 90 days         | Git repository        |
-| Secrets       | On change                      | Version history | Key Vault             |
-| Logs          | Real-time                      | 90 days         | Log aggregator        |
-
-#### B.2 Recovery Objectives
-
-| Scenario           | RTO        | RPO                            |
-| ------------------ | ---------- | ------------------------------ |
-| Single pod failure | 30 seconds | 0 (no data loss)               |
-| Node failure       | 2 minutes  | 0 (no data loss)               |
-| Zone failure       | 5 minutes  | < 1 minute                     |
-| Region failure     | 1 hour     | < 5 minutes                    |
-| Data corruption    | 4 hours    | < 1 hour (restore from backup) |
-
-#### B.3 Recovery Procedures
-
-| Scenario          | Procedure                                         |
-| ----------------- | ------------------------------------------------- |
-| Pod crash         | Automatic restart by Kubernetes                   |
-| Node failure      | Automatic rescheduling by Kubernetes              |
-| Database failover | Automatic via managed service                     |
-| Data restore      | See runbook: `docs/runbooks/disaster-recovery.md` |
-
-### C. Architecture Decision Records (ADRs)
-
-#### ADR Template
-
-```markdown
-# ADR-XXX: <!-- Title -->
-
-## Status
-
-<!-- Proposed | Accepted | Deprecated | Superseded by ADR-YYY -->
-
-## Context
-
-<!-- What is the issue that we're seeing that is motivating this decision? -->
-
-## Decision
-
-<!-- What is the change that we're proposing and/or doing? -->
-
-## Consequences
-
-<!-- What becomes easier or more difficult to do because of this change? -->
-
-### Positive
-
-<!-- Benefits of this decision -->
-
-### Negative
-
-<!-- Drawbacks and risks -->
-
-### Neutral
-
-<!-- Other impacts -->
-
-## Date
-
-<!-- YYYY-MM-DD -->
-
-## Authors
-
-<!-- Who made this decision -->
-```
-
-#### ADR Index
-
-| ID      | Title          | Status          | Date          |
-| ------- | -------------- | --------------- | ------------- |
-| ADR-001 | <!-- title --> | <!-- status --> | <!-- date --> |
-
-### D. Glossary
+### A. Glossary
 
 | Term        | Definition                                                      |
 | ----------- | --------------------------------------------------------------- |
@@ -1651,7 +1502,7 @@ Cache-Control: no-store (for sensitive data)
 | RTO         | Recovery Time Objective - max acceptable downtime               |
 | RPO         | Recovery Point Objective - max acceptable data loss             |
 
-### E. Related Documents
+### B. Related Documents
 
 | Document             | Description                   | Location                          |
 | -------------------- | ----------------------------- | --------------------------------- |
@@ -1660,10 +1511,3 @@ Cache-Control: no-store (for sensitive data)
 | Runbooks             | Operational procedures        | `docs/runbooks/`                  |
 | Copilot Instructions | AI assistant guidelines       | `.github/copilot-instructions.md` |
 | Infrastructure       | Deployment configurations     | `infrastructure/`                 |
-
-### F. Revision History
-
-| Version          | Date          | Author          | Changes                       |
-| ---------------- | ------------- | --------------- | ----------------------------- |
-| 1.0              | <!-- date --> | <!-- author --> | Initial architecture document |
-| <!-- version --> | <!-- date --> | <!-- author --> | <!-- changes -->              |
