@@ -1,4 +1,4 @@
-# Architecture Document Template
+# Service Architecture Document Template
 
 ## [Service Name] - xshopai Platform
 
@@ -123,7 +123,6 @@ Example: "The Inventory Service manages stock levels, reservations, and warehous
 
 <!-- List what this service handles -->
 
--
 -
 - **Out of Scope:**
 
@@ -634,8 +633,6 @@ HTTP/1.1 200 OK
 | 400    | `INVALID_PARAMETER`  | Query parameter validation failed | "limit must be between 1 and 100"  |
 | 400    | `INVALID_SORT_FIELD` | Sort field does not exist         | "Invalid sort field: unknownField" |
 | 500    | `INTERNAL_ERROR`     | Unexpected server error           | "Internal server error"            |
-
----
 
 <!-- Add more endpoint specifications as needed following the same pattern -->
 
