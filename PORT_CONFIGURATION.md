@@ -4,47 +4,47 @@ This document defines the standardized port configuration for all services in th
 
 ## Port Allocation Pattern
 
-| Port Type | Pattern | Example |
-|-----------|---------|---------|
-| Application Port | `800X` | 8001, 8002, ... 8014 |
-| Dapr HTTP Port | `350X` | 3501, 3502, ... 3514 |
-| Dapr gRPC Port | `5000X` | 50001, 50002, ... 50014 |
+| Port Type        | Pattern | Example                 |
+| ---------------- | ------- | ----------------------- |
+| Application Port | `800X`  | 8001, 8002, ... 8014    |
+| Dapr HTTP Port   | `350X`  | 3501, 3502, ... 3514    |
+| Dapr gRPC Port   | `5000X` | 50001, 50002, ... 50014 |
 
 ## Service Port Configuration
 
-| # | Service | App Port | Dapr HTTP | Dapr gRPC | Technology |
-|---|---------|----------|-----------|-----------|------------|
-| 1 | product-service | 8001 | 3501 | 50001 | Python/FastAPI |
-| 2 | user-service | 8002 | 3502 | 50002 | Node.js/Express |
-| 3 | admin-service | 8003 | 3503 | 50003 | Node.js/Express |
-| 4 | auth-service | 8004 | 3504 | 50004 | Node.js/Express |
-| 5 | inventory-service | 8005 | 3505 | 50005 | Python/FastAPI |
-| 6 | order-service | 8006 | 3506 | 50006 | .NET/C# |
-| 7 | order-processor-service | 8007 | 3507 | 50007 | Java/Spring Boot |
-| 8 | cart-service | 8008 | 3508 | 50008 | Java/Spring Boot |
-| 9 | payment-service | 8009 | 3509 | 50009 | .NET/C# |
-| 10 | review-service | 8010 | 3510 | 50010 | Node.js/Express |
-| 11 | notification-service | 8011 | 3511 | 50011 | Node.js/Express |
-| 12 | audit-service | 8012 | 3512 | 50012 | Node.js/Express |
-| 13 | chat-service | 8013 | 3513 | 50013 | Node.js/Express |
-| 14 | web-bff | 8014 | 3514 | 50014 | Node.js/Express |
+| #   | Service                 | App Port | Dapr HTTP | Dapr gRPC | Technology       |
+| --- | ----------------------- | -------- | --------- | --------- | ---------------- |
+| 1   | product-service         | 8001     | 3501      | 50001     | Python/FastAPI   |
+| 2   | user-service            | 8002     | 3502      | 50002     | Node.js/Express  |
+| 3   | admin-service           | 8003     | 3503      | 50003     | Node.js/Express  |
+| 4   | auth-service            | 8004     | 3504      | 50004     | Node.js/Express  |
+| 5   | inventory-service       | 8005     | 3505      | 50005     | Python/FastAPI   |
+| 6   | order-service           | 8006     | 3506      | 50006     | .NET/C#          |
+| 7   | order-processor-service | 8007     | 3507      | 50007     | Java/Spring Boot |
+| 8   | cart-service            | 8008     | 3508      | 50008     | Java/Spring Boot |
+| 9   | payment-service         | 8009     | 3509      | 50009     | .NET/C#          |
+| 10  | review-service          | 8010     | 3510      | 50010     | Node.js/Express  |
+| 11  | notification-service    | 8011     | 3511      | 50011     | Node.js/Express  |
+| 12  | audit-service           | 8012     | 3512      | 50012     | Node.js/Express  |
+| 13  | chat-service            | 8013     | 3513      | 50013     | Node.js/Express  |
+| 14  | web-bff                 | 8014     | 3514      | 50014     | Node.js/Express  |
 
 ## Frontend Applications (No Dapr)
 
-| Service | Port | Technology |
-|---------|------|------------|
-| customer-ui | 3000 | React |
-| admin-ui | 3001 | React |
+| Service     | Port | Technology |
+| ----------- | ---- | ---------- |
+| customer-ui | 3000 | React      |
+| admin-ui    | 3001 | React      |
 
 ## Infrastructure Services
 
-| Service | Port | Purpose |
-|---------|------|---------|
-| MongoDB | 27017 | Database |
-| RabbitMQ | 5672 | Message Broker |
-| RabbitMQ Management | 15672 | Management UI |
-| Redis | 6379 | Caching |
-| Zipkin | 9411 | Distributed Tracing |
+| Service             | Port  | Purpose             |
+| ------------------- | ----- | ------------------- |
+| MongoDB             | 27017 | Database            |
+| RabbitMQ            | 5672  | Message Broker      |
+| RabbitMQ Management | 15672 | Management UI       |
+| Redis               | 6379  | Caching             |
+| Zipkin              | 9411  | Distributed Tracing |
 
 ## Environment Variables
 
@@ -101,4 +101,4 @@ admin-ui                  3001       -            -
 
 ---
 
-*Last updated: January 27, 2026*
+_Last updated: January 27, 2026_
