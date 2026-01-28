@@ -75,6 +75,22 @@ dapr run \
   --log-level warn
 ```
 
+## Azure Container Apps Deployment
+
+> **Important:** In Azure Container Apps, the Dapr sidecar **always** runs on port **3500** (HTTP) and **50001** (gRPC), regardless of the service. This is different from local development where each service has unique ports.
+
+| Environment          | Dapr HTTP Port            | Dapr gRPC Port       | Reason                                                         |
+| -------------------- | ------------------------- | -------------------- | -------------------------------------------------------------- |
+| Local Dev            | 350X (unique per service) | 5000X (unique)       | All services on same machine, need unique ports                |
+| Azure Container Apps | 3500 (same for all)       | 50001 (same for all) | Each app is isolated, Dapr sidecar is always at localhost:3500 |
+
+When deploying to ACA, set:
+
+```bash
+DAPR_HTTP_PORT=3500
+DAPR_GRPC_PORT=50001
+```
+
 ## Quick Reference
 
 ```
