@@ -107,9 +107,11 @@ Example: "The Inventory Service manages stock levels, reservations, and warehous
 | **Cache**          | <!-- e.g., Redis 7.x / None -->                      |
 | **Messaging**      | <!-- Dapr Pub/Sub (RabbitMQ) -->                     |
 | **Main Port**      | <!-- e.g., 8084 -->                                  |
-| **Dapr HTTP Port** | <!-- e.g., 3504 -->                                  |
-| **Dapr gRPC Port** | <!-- e.g., 50004 -->                                 |
+| **Dapr HTTP Port** | 3500                                                 |
+| **Dapr gRPC Port** | 50001                                                |
 | **Pattern**        | <!-- Publisher / Consumer / Publisher & Consumer --> |
+
+> **Note:** All services now use the standard Dapr ports (3500 for HTTP, 50001 for gRPC). This simplifies configuration and works consistently whether running via Docker Compose or individual service runs.
 
 ### 1.4 Directory Structure
 
