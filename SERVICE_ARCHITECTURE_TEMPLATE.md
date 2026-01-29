@@ -821,13 +821,13 @@ Coding agents need this for deployment and local development.
 
 #### 6.1.1 Required Variables
 
-| Variable                           | Description                | Example         | Validation                       |
-| ---------------------------------- | -------------------------- | --------------- | -------------------------------- |
-| `PORT`                             | Service port               | `8080`          | Integer, 1-65535                 |
-| `NODE_ENV` / `ENVIRONMENT`         | Environment name           | `production`    | development, staging, production |
-| `DATABASE_URL`                     | Database connection string | `mongodb://...` | Valid URI                        |
-| `JWT_SECRET`                       | JWT signing key            | (from secret)   | Min 32 chars                     |
-| <!-- Add service-specific vars --> |                            |                 |                                  |
+| Variable                           | Description                | Example         | Validation              |
+| ---------------------------------- | -------------------------- | --------------- | ----------------------- |
+| `PORT`                             | Service port               | `8080`          | Integer, 1-65535        |
+| `NODE_ENV` / `ENVIRONMENT`         | Environment name           | `production`    | development, production |
+| `DATABASE_URL`                     | Database connection string | `mongodb://...` | Valid URI               |
+| `JWT_SECRET`                       | JWT signing key            | (from secret)   | Min 32 chars            |
+| <!-- Add service-specific vars --> |                            |                 |                         |
 
 #### 6.1.2 Optional Variables
 
@@ -929,7 +929,6 @@ CMD ["<!-- entrypoint -->"]
 | Environment | CPU Request | CPU Limit | Memory Request | Memory Limit | Replicas |
 | ----------- | ----------- | --------- | -------------- | ------------ | -------- |
 | Development | 100m        | 500m      | 128Mi          | 512Mi        | 1        |
-| Staging     | 250m        | 1000m     | 256Mi          | 1Gi          | 2        |
 | Production  | 500m        | 2000m     | 512Mi          | 2Gi          | 3-10     |
 
 ### 7.3 Deployment Topology
@@ -983,13 +982,12 @@ properties:
 
 ### 7.5 CI/CD Pipeline
 
-| Stage             | Trigger         | Actions                   | Duration |
-| ----------------- | --------------- | ------------------------- | -------- |
-| Build             | Push to main/PR | Lint, Test, Build image   | ~5 min   |
-| Security Scan     | After Build     | Container scan, SAST      | ~3 min   |
-| Deploy to Dev     | Merge to main   | Deploy to dev environment | ~2 min   |
-| Deploy to Staging | Manual approval | Deploy to staging         | ~2 min   |
-| Deploy to Prod    | Manual approval | Blue-green deployment     | ~5 min   |
+| Stage          | Trigger         | Actions                   | Duration |
+| -------------- | --------------- | ------------------------- | -------- |
+| Build          | Push to main/PR | Lint, Test, Build image   | ~5 min   |
+| Security Scan  | After Build     | Container scan, SAST      | ~3 min   |
+| Deploy to Dev  | Merge to main   | Deploy to dev environment | ~2 min   |
+| Deploy to Prod | Manual approval | Blue-green deployment     | ~5 min   |
 
 ### 7.6 Rollback Procedure
 
@@ -1051,7 +1049,6 @@ All services MUST use structured JSON logging:
 | Environment | Level                        | Stack Traces                | Request Bodies | Retention |
 | ----------- | ---------------------------- | --------------------------- | -------------- | --------- |
 | Development | DEBUG                        | Full                        | Yes            | 7 days    |
-| Staging     | INFO                         | Summarized (top 5 frames)   | Metadata only  | 30 days   |
 | Production  | INFO (WARN for high-traffic) | Error tracking service only | No             | 90 days   |
 
 ### 8.2 Metrics Collection
@@ -1095,18 +1092,18 @@ OTEL_TRACES_SAMPLER_ARG: '0.1' # 10% sampling in production
 
 All spans MUST include:
 
-| Attribute                | Description                    |
-| ------------------------ | ------------------------------ |
-| `service.name`           | Service identifier             |
-| `service.version`        | Service version                |
-| `deployment.environment` | Environment (dev/staging/prod) |
-| `http.method`            | HTTP method                    |
-| `http.url`               | Full URL (sanitized)           |
-| `http.status_code`       | Response status code           |
-| `db.system`              | Database type                  |
-| `db.operation`           | Database operation             |
-| `messaging.system`       | Message broker type            |
-| `messaging.operation`    | publish/consume                |
+| Attribute                | Description            |
+| ------------------------ | ---------------------- |
+| `service.name`           | Service identifier     |
+| `service.version`        | Service version        |
+| `deployment.environment` | Environment (dev/prod) |
+| `http.method`            | HTTP method            |
+| `http.url`               | Full URL (sanitized)   |
+| `http.status_code`       | Response status code   |
+| `db.system`              | Database type          |
+| `db.operation`           | Database operation     |
+| `messaging.system`       | Message broker type    |
+| `messaging.operation`    | publish/consume        |
 
 ### 8.4 Health Checks
 
