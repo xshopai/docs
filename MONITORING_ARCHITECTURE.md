@@ -38,24 +38,25 @@
 
 ## Components
 
-| Component | Purpose |
-|-----------|---------|
-| **Azure Monitor** | Umbrella platform for all monitoring |
-| **Log Analytics Workspace** | Central database for all logs |
-| **Application Insights** | APM: distributed tracing, request tracking, dependencies |
-| **Container Apps Environment** | Auto-sends stdout/stderr to Log Analytics |
+| Component                      | Purpose                                                  |
+| ------------------------------ | -------------------------------------------------------- |
+| **Azure Monitor**              | Umbrella platform for all monitoring                     |
+| **Log Analytics Workspace**    | Central database for all logs                            |
+| **Application Insights**       | APM: distributed tracing, request tracking, dependencies |
+| **Container Apps Environment** | Auto-sends stdout/stderr to Log Analytics                |
 
 ## Data Flows
 
-| Flow | Source | Destination | How |
-|------|--------|-------------|-----|
-| Console Logs | `console.log()`, `print()`, etc. | `ContainerAppConsoleLogs_CL` | Automatic |
-| System Logs | ACA platform events | `ContainerAppSystemLogs_CL` | Automatic |
-| App Telemetry | App Insights SDK | `traces`, `requests`, `dependencies` | Requires SDK |
+| Flow          | Source                           | Destination                          | How          |
+| ------------- | -------------------------------- | ------------------------------------ | ------------ |
+| Console Logs  | `console.log()`, `print()`, etc. | `ContainerAppConsoleLogs_CL`         | Automatic    |
+| System Logs   | ACA platform events              | `ContainerAppSystemLogs_CL`          | Automatic    |
+| App Telemetry | App Insights SDK                 | `traces`, `requests`, `dependencies` | Requires SDK |
 
 ## Quick Queries (Log Analytics)
 
 **All errors across services:**
+
 ```kusto
 ContainerAppConsoleLogs_CL
 | where TimeGenerated > ago(1h)
@@ -65,6 +66,7 @@ ContainerAppConsoleLogs_CL
 ```
 
 **Error count by service:**
+
 ```kusto
 ContainerAppConsoleLogs_CL
 | where TimeGenerated > ago(1h)
@@ -74,6 +76,7 @@ ContainerAppConsoleLogs_CL
 ```
 
 **System events (restarts, crashes):**
+
 ```kusto
 ContainerAppSystemLogs_CL
 | where TimeGenerated > ago(1h)
