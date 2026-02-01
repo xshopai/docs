@@ -752,16 +752,19 @@ curl -X POST http://localhost:3500/v1.0/publish/xshopai-pubsub/test.topic \
 
 ---
 
-## Known Configuration Issues
+## Future Enhancements
 
-### ⚠️ Issue 1: Missing Subscription Configurations
+The following services may benefit from pub/sub integration in the future. GitHub issues have been created to track these:
 
-**Affected Services:**
+| Service          | Current State  | GitHub Issue                                                               |
+| ---------------- | -------------- | -------------------------------------------------------------------------- |
+| **cart-service** | Pure publisher | [xshopai/cart-service#1](https://github.com/xshopai/cart-service/issues/1) |
+| **chat-service** | No pub/sub     | [xshopai/chat-service#1](https://github.com/xshopai/chat-service/issues/1) |
 
-- cart-service (no subscriptions.yaml found)
-- order-service (no subscriptions.yaml - expected, it's pure publisher)
-- web-bff (no pub/sub - expected, it's BFF only)
-- chat-service (no pub/sub - may need integration)
+**Services that intentionally don't consume events:**
+
+- **order-service** - Pure publisher (saga initiator)
+- **web-bff** - HTTP gateway only, no async messaging
 
 > **Note:** All services must use `admin:admin123` credentials for local RabbitMQ (configured in `docker-compose.infrastructure.yml`). Production configurations are managed separately via infrastructure code and use managed identity.
 
