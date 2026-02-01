@@ -189,99 +189,99 @@ spec:
 
 ### Authentication Events (auth-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `auth.login` | `auth.login` | User successfully logged in | `{userId, email, timestamp, ipAddress}` |
-| `auth.register` | `auth.register` | New user registered | `{userId, email, firstName, lastName, timestamp}` |
-| `auth.email.verification.required` | `auth.email.verification.required` | Email verification needed | `{userId, email, verificationToken}` |
-| `auth.password.reset.requested` | `auth.password.reset.requested` | Password reset initiated | `{userId, email, resetToken}` |
-| `auth.password.reset.completed` | `auth.password.reset.completed` | Password successfully reset | `{userId, email, timestamp}` |
-| `auth.account.reactivated` | `auth.account.reactivated` | Account reactivated | `{userId, email, timestamp}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `auth.login` | `auth.login` | User successfully logged in | audit-service, notification-service |
+| `auth.register` | `auth.register` | New user registered | audit-service, notification-service |
+| `auth.email.verification.required` | `auth.email.verification.required` | Email verification needed | audit-service, notification-service |
+| `auth.password.reset.requested` | `auth.password.reset.requested` | Password reset initiated | audit-service, notification-service |
+| `auth.password.reset.completed` | `auth.password.reset.completed` | Password successfully reset | audit-service, notification-service |
+| `auth.account.reactivated` | `auth.account.reactivated` | Account reactivated | audit-service, notification-service |
 
 ### User Events (user-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `user.created` | `user.created` | New user profile created | `{userId, email, firstName, lastName}` |
-| `user.updated` | `user.updated` | User profile updated | `{userId, changes, timestamp}` |
-| `user.deleted` | `user.deleted` | User account deleted | `{userId, email, reason}` |
-| `user.logged_in` | `user.logged_in` | User login recorded | `{userId, ipAddress, userAgent}` |
-| `user.logged_out` | `user.logged_out` | User logout recorded | `{userId, timestamp}` |
-| `user.deactivated` | `user.deactivated` | Account deactivated | `{userId, reason}` |
-| `user.email_verified` | `user.email_verified` | Email verified | `{userId, email}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `user.created` | `user.created` | New user profile created | audit-service, notification-service |
+| `user.updated` | `user.updated` | User profile updated | audit-service, notification-service |
+| `user.deleted` | `user.deleted` | User account deleted | audit-service, notification-service |
+| `user.logged_in` | `user.logged_in` | User login recorded | audit-service |
+| `user.logged_out` | `user.logged_out` | User logout recorded | audit-service |
+| `user.deactivated` | `user.deactivated` | Account deactivated | audit-service, notification-service |
+| `user.email_verified` | `user.email_verified` | Email verified | audit-service, notification-service |
 
 ### Order Events (order-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `order.created` | `order.created` | New order placed | `{orderId, userId, items, totalAmount}` |
-| `order.updated` | `order.updated` | Order modified | `{orderId, changes}` |
-| `order.cancelled` | `order.cancelled` | Order cancelled | `{orderId, reason}` |
-| `order.completed` | `order.completed` | Order fulfilled | `{orderId, completedAt}` |
-| `order.status.changed` | `order.status.changed` | Order status updated | `{orderId, oldStatus, newStatus}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `order.created` | `order.created` | New order placed | order-processor-service, payment-service, inventory-service, audit-service, notification-service |
+| `order.updated` | `order.updated` | Order modified | audit-service, notification-service |
+| `order.cancelled` | `order.cancelled` | Order cancelled | payment-service, inventory-service, audit-service, notification-service |
+| `order.completed` | `order.completed` | Order fulfilled | audit-service, notification-service |
+| `order.status.changed` | `order.status.changed` | Order status updated | audit-service, notification-service |
 
 ### Payment Events (payment-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `payment.processing` | `payment.processing` | Payment being processed | `{paymentId, orderId, amount}` |
-| `payment.received` | `payment.received` | Payment successful | `{paymentId, orderId, amount, method}` |
-| `payment.failed` | `payment.failed` | Payment failed | `{paymentId, orderId, reason}` |
-| `payment.refund` | `payment.refund` | Refund processed | `{paymentId, orderId, refundAmount}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `payment.processing` | `payment.processing` | Payment being processed | audit-service |
+| `payment.received` | `payment.received` | Payment successful | order-processor-service, inventory-service, audit-service, notification-service |
+| `payment.failed` | `payment.failed` | Payment failed | order-processor-service, audit-service, notification-service |
+| `payment.refund` | `payment.refund` | Refund processed | audit-service, notification-service |
 
 ### Inventory Events (inventory-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `inventory.stock.updated` | `inventory.stock.updated` | Stock quantity changed | `{sku, productId, quantity, reason}` |
-| `inventory.reserved` | `inventory.reserved` | Stock reserved for order | `{sku, orderId, quantity}` |
-| `inventory.released` | `inventory.released` | Reserved stock released | `{sku, orderId, quantity}` |
-| `inventory.low.stock` | `inventory.low.stock` | Low stock alert | `{sku, currentQuantity, threshold}` |
-| `inventory.out.of.stock` | `inventory.out.of.stock` | Out of stock alert | `{sku, productId}` |
-| `inventory.created` | `inventory.created` | New inventory record | `{sku, productId, initialQuantity}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `inventory.stock.updated` | `inventory.stock.updated` | Stock quantity changed | product-service, audit-service |
+| `inventory.reserved` | `inventory.reserved` | Stock reserved for order | order-processor-service, audit-service |
+| `inventory.released` | `inventory.released` | Reserved stock released | order-processor-service, audit-service |
+| `inventory.low.stock` | `inventory.low.stock` | Low stock alert | notification-service, audit-service |
+| `inventory.out.of.stock` | `inventory.out.of.stock` | Out of stock alert | product-service, notification-service, audit-service |
+| `inventory.created` | `inventory.created` | New inventory record | audit-service |
 
 ### Product Events (product-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `product.created` | `product.created` | New product added | `{productId, sku, name, price}` |
-| `product.updated` | `product.updated` | Product modified | `{productId, changes}` |
-| `product.deleted` | `product.deleted` | Product removed | `{productId, sku}` |
-| `product.price.changed` | `product.price.changed` | Price updated | `{productId, oldPrice, newPrice}` |
-| `product.badge.assigned` | `product.badge.assigned` | Badge added | `{productId, badge}` |
-| `product.badge.removed` | `product.badge.removed` | Badge removed | `{productId, badge}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `product.created` | `product.created` | New product added | inventory-service, audit-service |
+| `product.updated` | `product.updated` | Product modified | inventory-service, audit-service |
+| `product.deleted` | `product.deleted` | Product removed | inventory-service, audit-service |
+| `product.price.changed` | `product.price.changed` | Price updated | audit-service, notification-service |
+| `product.badge.assigned` | `product.badge.assigned` | Badge added | audit-service |
+| `product.badge.removed` | `product.badge.removed` | Badge removed | audit-service |
 
 ### Review Events (review-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `review.created` | `reviews` | New review submitted | `{reviewId, productId, userId, rating}` |
-| `review.updated` | `reviews` | Review modified | `{reviewId, changes}` |
-| `review.deleted` | `reviews` | Review removed | `{reviewId, productId}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `review.created` | `reviews` | New review submitted | product-service, audit-service |
+| `review.updated` | `reviews` | Review modified | product-service, audit-service |
+| `review.deleted` | `reviews` | Review removed | product-service, audit-service |
 
 ### Cart Events (cart-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `cart.item.added` | `cart.item.added` | Item added to cart | `{cartId, userId, productId, quantity}` |
-| `cart.item.removed` | `cart.item.removed` | Item removed from cart | `{cartId, productId}` |
-| `cart.cleared` | `cart.cleared` | Cart emptied | `{cartId, userId}` |
-| `cart.abandoned` | `cart.abandoned` | Cart abandoned | `{cartId, userId, items}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `cart.item.added` | `cart.item.added` | Item added to cart | audit-service |
+| `cart.item.removed` | `cart.item.removed` | Item removed from cart | audit-service |
+| `cart.cleared` | `cart.cleared` | Cart emptied | audit-service |
+| `cart.abandoned` | `cart.abandoned` | Cart abandoned | notification-service, audit-service |
 
 ### Admin Events (admin-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `admin.action.performed` | `admin.action.performed` | Admin action logged | `{adminId, action, target}` |
-| `admin.user.created` | `admin.user.created` | Admin created user | `{adminId, userId}` |
-| `admin.config.changed` | `admin.config.changed` | Configuration modified | `{adminId, setting, oldValue, newValue}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `admin.action.performed` | `admin.action.performed` | Admin action logged | audit-service |
+| `admin.user.created` | `admin.user.created` | Admin created user | audit-service, notification-service |
+| `admin.config.changed` | `admin.config.changed` | Configuration modified | audit-service |
 
 ### Notification Events (notification-service)
 
-| Event Type | Topic | Description | Payload |
-|------------|-------|-------------|---------|
-| `notification.sent` | `notification.sent` | Notification delivered | `{notificationId, type, recipient}` |
-| `notification.failed` | `notification.failed` | Delivery failed | `{notificationId, reason}` |
+| Event Type | Topic | Description | Consumer(s) |
+|------------|-------|-------------|-------------|
+| `notification.sent` | `notification.sent` | Notification delivered | audit-service |
+| `notification.failed` | `notification.failed` | Delivery failed | audit-service |
 
 ---
 
