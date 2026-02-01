@@ -187,7 +187,15 @@ spec:
 
 ## Event Catalog
 
-### Authentication Events (auth-service)
+This section documents events organized by service, showing both published and consumed events for each.
+
+---
+
+### auth-service
+
+**Role:** Pure Publisher | **Technology:** Node.js
+
+#### Published Events
 
 | Event Type                         | Topic                              | Description                 | Consumer(s)                         |
 | ---------------------------------- | ---------------------------------- | --------------------------- | ----------------------------------- |
@@ -198,7 +206,17 @@ spec:
 | `auth.password.reset.completed`    | `auth.password.reset.completed`    | Password successfully reset | audit-service, notification-service |
 | `auth.account.reactivated`         | `auth.account.reactivated`         | Account reactivated         | audit-service, notification-service |
 
-### User Events (user-service)
+#### Consumed Events
+
+_None - auth-service is a pure publisher._
+
+---
+
+### user-service
+
+**Role:** Pure Publisher | **Technology:** Node.js
+
+#### Published Events
 
 | Event Type            | Topic                 | Description              | Consumer(s)                         |
 | --------------------- | --------------------- | ------------------------ | ----------------------------------- |
@@ -210,7 +228,17 @@ spec:
 | `user.deactivated`    | `user.deactivated`    | Account deactivated      | audit-service, notification-service |
 | `user.email_verified` | `user.email_verified` | Email verified           | audit-service, notification-service |
 
-### Order Events (order-service)
+#### Consumed Events
+
+_None - user-service is a pure publisher._
+
+---
+
+### order-service
+
+**Role:** Pure Publisher | **Technology:** C# .NET
+
+#### Published Events
 
 | Event Type             | Topic                  | Description          | Consumer(s)                                                                                      |
 | ---------------------- | ---------------------- | -------------------- | ------------------------------------------------------------------------------------------------ |
@@ -220,7 +248,17 @@ spec:
 | `order.completed`      | `order.completed`      | Order fulfilled      | audit-service, notification-service                                                              |
 | `order.status.changed` | `order.status.changed` | Order status updated | audit-service, notification-service                                                              |
 
-### Payment Events (payment-service)
+#### Consumed Events
+
+_None - order-service is a pure publisher (saga initiator)._
+
+---
+
+### payment-service
+
+**Role:** Hybrid (Publisher + Consumer) | **Technology:** C# .NET
+
+#### Published Events
 
 | Event Type           | Topic                | Description             | Consumer(s)                                                                     |
 | -------------------- | -------------------- | ----------------------- | ------------------------------------------------------------------------------- |
@@ -229,7 +267,20 @@ spec:
 | `payment.failed`     | `payment.failed`     | Payment failed          | order-processor-service, audit-service, notification-service                    |
 | `payment.refund`     | `payment.refund`     | Refund processed        | audit-service, notification-service                                             |
 
-### Inventory Events (inventory-service)
+#### Consumed Events
+
+| Event Type        | Topic             | Source        | Handler Route                        | Action                   |
+| ----------------- | ----------------- | ------------- | ------------------------------------ | ------------------------ |
+| `order.created`   | `order.created`   | order-service | `/api/events/orders/order-created`   | Initiate payment process |
+| `order.cancelled` | `order.cancelled` | order-service | `/api/events/orders/order-cancelled` | Cancel/refund payment    |
+
+---
+
+### inventory-service
+
+**Role:** Hybrid (Publisher + Consumer) | **Technology:** Python Flask
+
+#### Published Events
 
 | Event Type                | Topic                     | Description              | Consumer(s)                                          |
 | ------------------------- | ------------------------- | ------------------------ | ---------------------------------------------------- |
@@ -240,7 +291,24 @@ spec:
 | `inventory.out.of.stock`  | `inventory.out.of.stock`  | Out of stock alert       | product-service, notification-service, audit-service |
 | `inventory.created`       | `inventory.created`       | New inventory record     | audit-service                                        |
 
-### Product Events (product-service)
+#### Consumed Events
+
+| Event Type         | Topic              | Source          | Handler Route                   | Action                          |
+| ------------------ | ------------------ | --------------- | ------------------------------- | ------------------------------- |
+| `order.created`    | `order.created`    | order-service   | `/dapr/events/order.created`    | Reserve stock for order items   |
+| `order.cancelled`  | `order.cancelled`  | order-service   | `/dapr/events/order.cancelled`  | Release reserved stock          |
+| `payment.received` | `payment.received` | payment-service | `/dapr/events/payment.received` | Confirm stock reservation       |
+| `payment.failed`   | `payment.failed`   | payment-service | `/dapr/events/payment.failed`   | Release reserved stock          |
+| `product.created`  | `product.created`  | product-service | `/dapr/events/product.created`  | Create initial inventory record |
+| `product.deleted`  | `product.deleted`  | product-service | `/dapr/events/product.deleted`  | Mark inventory as discontinued  |
+
+---
+
+### product-service
+
+**Role:** Hybrid (Publisher + Consumer) | **Technology:** Python FastAPI
+
+#### Published Events
 
 | Event Type               | Topic                    | Description       | Consumer(s)                         |
 | ------------------------ | ------------------------ | ----------------- | ----------------------------------- |
@@ -251,7 +319,23 @@ spec:
 | `product.badge.assigned` | `product.badge.assigned` | Badge added       | audit-service                       |
 | `product.badge.removed`  | `product.badge.removed`  | Badge removed     | audit-service                       |
 
-### Review Events (review-service)
+#### Consumed Events
+
+| Event Type                | Topic                     | Source            | Handler Route                      | Action                                       |
+| ------------------------- | ------------------------- | ----------------- | ---------------------------------- | -------------------------------------------- |
+| `review.created`          | `review.created`          | review-service    | `/dapr/events/review.created`      | Update review aggregates (count, avg rating) |
+| `review.updated`          | `review.updated`          | review-service    | `/dapr/events/review.updated`      | Recalculate average rating                   |
+| `review.deleted`          | `review.deleted`          | review-service    | `/dapr/events/review.deleted`      | Recalculate review aggregates                |
+| `inventory.stock.updated` | `inventory.stock.updated` | inventory-service | `/dapr/events/inventory.updated`   | Update availability status                   |
+| `inventory.out.of.stock`  | `inventory.out.of.stock`  | inventory-service | `/dapr/events/inventory.low_stock` | Mark product as out of stock                 |
+
+---
+
+### review-service
+
+**Role:** Pure Publisher | **Technology:** Node.js
+
+#### Published Events
 
 | Event Type       | Topic            | Description          | Consumer(s)                    |
 | ---------------- | ---------------- | -------------------- | ------------------------------ |
@@ -259,7 +343,17 @@ spec:
 | `review.updated` | `review.updated` | Review modified      | product-service, audit-service |
 | `review.deleted` | `review.deleted` | Review removed       | product-service, audit-service |
 
-### Cart Events (cart-service)
+#### Consumed Events
+
+_None - review-service is a pure publisher._
+
+---
+
+### cart-service
+
+**Role:** Pure Publisher | **Technology:** Java Spring Boot
+
+#### Published Events
 
 | Event Type          | Topic               | Description            | Consumer(s)                         |
 | ------------------- | ------------------- | ---------------------- | ----------------------------------- |
@@ -268,7 +362,17 @@ spec:
 | `cart.cleared`      | `cart.cleared`      | Cart emptied           | audit-service                       |
 | `cart.abandoned`    | `cart.abandoned`    | Cart abandoned         | notification-service, audit-service |
 
-### Admin Events (admin-service)
+#### Consumed Events
+
+_None currently - see [GitHub Issue #1](https://github.com/xshopai/cart-service/issues/1) for planned event subscriptions._
+
+---
+
+### admin-service
+
+**Role:** Pure Publisher | **Technology:** Node.js
+
+#### Published Events
 
 | Event Type               | Topic                    | Description            | Consumer(s)                         |
 | ------------------------ | ------------------------ | ---------------------- | ----------------------------------- |
@@ -276,12 +380,127 @@ spec:
 | `admin.user.created`     | `admin.user.created`     | Admin created user     | audit-service, notification-service |
 | `admin.config.changed`   | `admin.config.changed`   | Configuration modified | audit-service                       |
 
-### Notification Events (notification-service)
+#### Consumed Events
+
+_None - admin-service is a pure publisher._
+
+---
+
+### order-processor-service
+
+**Role:** Hybrid (Saga Coordinator) | **Technology:** Java Spring Boot
+
+#### Published Events
+
+| Event Type             | Topic                  | Description                  | Consumer(s)                         |
+| ---------------------- | ---------------------- | ---------------------------- | ----------------------------------- |
+| `order.processing`     | `order.processing`     | Order processing started     | audit-service, notification-service |
+| `order.completed`      | `order.completed`      | Order successfully completed | audit-service, notification-service |
+| `order.failed`         | `order.failed`         | Order processing failed      | audit-service, notification-service |
+| `payment.processing`   | `payment.processing`   | Payment step initiated       | payment-service, audit-service      |
+| `inventory.reserve`    | `inventory.reserve`    | Stock reservation request    | inventory-service, audit-service    |
+| `inventory.release`    | `inventory.release`    | Stock release request        | inventory-service, audit-service    |
+| `shipping.preparation` | `shipping.preparation` | Shipping preparation start   | audit-service                       |
+
+#### Consumed Events
+
+| Event Type           | Topic                | Source            | Handler Route                | Action                                 |
+| -------------------- | -------------------- | ----------------- | ---------------------------- | -------------------------------------- |
+| `order.created`      | `order.created`      | order-service     | `/events/order-created`      | Start order processing saga            |
+| `payment.received`   | `payment.received`   | payment-service   | `/events/payment-received`   | Proceed to inventory reservation       |
+| `payment.failed`     | `payment.failed`     | payment-service   | `/events/payment-failed`     | Cancel order, trigger compensation     |
+| `inventory.reserved` | `inventory.reserved` | inventory-service | `/events/inventory-reserved` | Proceed to shipping preparation        |
+| `inventory.released` | `inventory.released` | inventory-service | `/events/inventory-released` | Handle reservation failure             |
+| `shipping.prepared`  | `shipping.prepared`  | (future)          | `/events/shipping-prepared`  | Complete order                         |
+| `shipping.failed`    | `shipping.failed`    | (future)          | `/events/shipping-failed`    | Trigger compensation (refund, release) |
+
+---
+
+### notification-service
+
+**Role:** Hybrid (Publisher + Consumer) | **Technology:** TypeScript Node.js
+
+#### Published Events
 
 | Event Type            | Topic                 | Description            | Consumer(s)   |
 | --------------------- | --------------------- | ---------------------- | ------------- |
 | `notification.sent`   | `notification.sent`   | Notification delivered | audit-service |
 | `notification.failed` | `notification.failed` | Delivery failed        | audit-service |
+
+#### Consumed Events
+
+| Event Type                         | Topic                              | Source            | Handler Route                           | Action                            |
+| ---------------------------------- | ---------------------------------- | ----------------- | --------------------------------------- | --------------------------------- |
+| `auth.login`                       | `auth.login`                       | auth-service      | `/events/auth/login`                    | Send login notification email     |
+| `auth.register`                    | `auth.register`                    | auth-service      | `/events/auth/register`                 | Send welcome email                |
+| `auth.email.verification.required` | `auth.email.verification.required` | auth-service      | `/events/auth/email-verification`       | Send verification email           |
+| `auth.password.reset.requested`    | `auth.password.reset.requested`    | auth-service      | `/events/auth/password-reset-requested` | Send password reset email         |
+| `auth.password.reset.completed`    | `auth.password.reset.completed`    | auth-service      | `/events/auth/password-reset-completed` | Send confirmation email           |
+| `user.created`                     | `user.created`                     | user-service      | `/events/user/created`                  | Send profile setup email          |
+| `user.updated`                     | `user.updated`                     | user-service      | `/events/user/updated`                  | Send profile change confirmation  |
+| `order.created`                    | `order.created`                    | order-service     | `/events/order/created`                 | Send order confirmation email     |
+| `order.completed`                  | `order.completed`                  | order-service     | `/events/order/completed`               | Send order delivered email        |
+| `order.cancelled`                  | `order.cancelled`                  | order-service     | `/events/order/cancelled`               | Send cancellation email           |
+| `payment.received`                 | `payment.received`                 | payment-service   | `/events/payment/received`              | Send payment receipt email        |
+| `payment.failed`                   | `payment.failed`                   | payment-service   | `/events/payment/failed`                | Send payment failure notification |
+| `inventory.low.stock`              | `inventory.low.stock`              | inventory-service | `/events/inventory/low-stock`           | Send low stock alert (admin)      |
+| `inventory.out.of.stock`           | `inventory.out.of.stock`           | inventory-service | `/events/inventory/out-of-stock`        | Send out of stock alert (admin)   |
+| `cart.abandoned`                   | `cart.abandoned`                   | cart-service      | `/events/cart/abandoned`                | Send cart recovery email          |
+
+---
+
+### audit-service
+
+**Role:** Pure Consumer (Event Sink) | **Technology:** TypeScript Node.js
+
+#### Published Events
+
+_None - audit-service is a pure consumer that logs all platform events._
+
+#### Consumed Events
+
+Audit service subscribes to **all events** across the platform for compliance, debugging, and analytics:
+
+| Domain           | Events Consumed                                                                                                                                                 |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Auth**         | `auth.login`, `auth.register`, `auth.email.verification.required`, `auth.password.reset.requested`, `auth.password.reset.completed`, `auth.account.reactivated` |
+| **User**         | `user.created`, `user.updated`, `user.deleted`, `user.logged_in`, `user.logged_out`, `user.deactivated`, `user.email_verified`                                  |
+| **Order**        | `order.created`, `order.updated`, `order.cancelled`, `order.completed`, `order.status.changed`, `order.failed`                                                  |
+| **Payment**      | `payment.processing`, `payment.received`, `payment.failed`, `payment.refund`                                                                                    |
+| **Inventory**    | `inventory.stock.updated`, `inventory.reserved`, `inventory.released`, `inventory.low.stock`, `inventory.out.of.stock`, `inventory.created`                     |
+| **Product**      | `product.created`, `product.updated`, `product.deleted`, `product.price.changed`, `product.badge.assigned`, `product.badge.removed`                             |
+| **Review**       | `review.created`, `review.updated`, `review.deleted`, `review.moderated`, `review.flagged`                                                                      |
+| **Cart**         | `cart.item.added`, `cart.item.removed`, `cart.cleared`, `cart.abandoned`                                                                                        |
+| **Admin**        | `admin.action.performed`, `admin.user.created`, `admin.config.changed`                                                                                          |
+| **Notification** | `notification.sent`, `notification.delivered`, `notification.failed`, `notification.opened`                                                                     |
+
+---
+
+### chat-service
+
+**Role:** No Pub/Sub Integration | **Technology:** TypeScript Node.js
+
+#### Published Events
+
+_None currently - see [GitHub Issue #1](https://github.com/xshopai/chat-service/issues/1) for planned integration._
+
+#### Consumed Events
+
+_None currently._
+
+---
+
+### web-bff
+
+**Role:** HTTP Gateway Only | **Technology:** TypeScript Node.js
+
+#### Published Events
+
+_None - web-bff is an HTTP gateway and does not participate in async messaging._
+
+#### Consumed Events
+
+_None - web-bff is an HTTP gateway and does not participate in async messaging._
 
 ---
 
