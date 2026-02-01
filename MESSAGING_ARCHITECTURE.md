@@ -23,14 +23,14 @@ The xshopai platform uses **event-driven architecture** for asynchronous inter-s
 
 ### Key Principles
 
-| Principle | Description |
-|-----------|-------------|
-| **Dapr Abstraction** | All pub/sub operations go through Dapr sidecars, enabling broker portability |
-| **CloudEvents Format** | All events follow CloudEvents specification (v1.0) for interoperability |
-| **Topic-Based Routing** | Events are published to topics; consumers subscribe to relevant topics |
-| **Fire-and-Forget** | Publishers don't wait for consumer acknowledgment (async decoupling) |
-| **At-Least-Once Delivery** | RabbitMQ ensures messages are delivered at least once |
-| **Idempotent Handlers** | All event handlers must be idempotent to handle retries safely |
+| Principle                  | Description                                                                  |
+| -------------------------- | ---------------------------------------------------------------------------- |
+| **Dapr Abstraction**       | All pub/sub operations go through Dapr sidecars, enabling broker portability |
+| **CloudEvents Format**     | All events follow CloudEvents specification (v1.0) for interoperability      |
+| **Topic-Based Routing**    | Events are published to topics; consumers subscribe to relevant topics       |
+| **Fire-and-Forget**        | Publishers don't wait for consumer acknowledgment (async decoupling)         |
+| **At-Least-Once Delivery** | RabbitMQ ensures messages are delivered at least once                        |
+| **Idempotent Handlers**    | All event handlers must be idempotent to handle retries safely               |
 
 ### Communication Patterns
 
@@ -73,50 +73,50 @@ spec:
   version: v1
   metadata:
     - name: connectionString
-      value: "amqp://admin:admin123@127.0.0.1:5672"
+      value: 'amqp://admin:admin123@127.0.0.1:5672'
     - name: exchangeName
-      value: "xshopai.events"
+      value: 'xshopai.events'
     - name: exchangeKind
-      value: "topic"
+      value: 'topic'
     - name: durable
-      value: "true"
+      value: 'true'
     - name: autoAck
-      value: "false"
+      value: 'false'
     - name: deliveryMode
-      value: "2"  # Persistent
+      value: '2' # Persistent
     - name: requeueInFailure
-      value: "true"
+      value: 'true'
     - name: prefetchCount
-      value: "10"
+      value: '10'
 ```
 
 ### RabbitMQ Configuration
 
-| Setting | Value | Description |
-|---------|-------|-------------|
-| **Host** | `127.0.0.1` (local) / `rabbitmq` (Docker) | Broker hostname |
-| **Port** | `5672` (AMQP) / `15672` (Management) | Connection ports |
-| **Username** | `admin` | Default username |
-| **Password** | `admin123` | Default password |
-| **Exchange** | `xshopai.events` | Main topic exchange |
-| **Exchange Type** | `topic` | Enables wildcard routing |
+| Setting           | Value                                     | Description              |
+| ----------------- | ----------------------------------------- | ------------------------ |
+| **Host**          | `127.0.0.1` (local) / `rabbitmq` (Docker) | Broker hostname          |
+| **Port**          | `5672` (AMQP) / `15672` (Management)      | Connection ports         |
+| **Username**      | `admin`                                   | Default username         |
+| **Password**      | `admin123`                                | Default password         |
+| **Exchange**      | `xshopai.events`                          | Main topic exchange      |
+| **Exchange Type** | `topic`                                   | Enables wildcard routing |
 
 ### Service Ports Reference
 
-| Service | App Port | Dapr HTTP Port | Dapr gRPC Port |
-|---------|----------|----------------|----------------|
-| admin-service | 8080 | 3500 | 50001 |
-| audit-service | 8015 | 3500 | 50001 |
-| auth-service | 8003 | 3500 | 50001 |
-| cart-service | 8004 | 3500 | 50001 |
-| inventory-service | 8005 | 3500 | 50001 |
-| notification-service | 8010 | 3500 | 50001 |
-| order-processor-service | 8007 | 3500 | 50001 |
-| order-service | 8006 | 3500 | 50001 |
-| payment-service | 8009 | 3500 | 50001 |
-| product-service | 8001 | 3500 | 50001 |
-| review-service | 8008 | 3500 | 50001 |
-| user-service | 8002 | 3500 | 50001 |
+| Service                 | App Port | Dapr HTTP Port | Dapr gRPC Port |
+| ----------------------- | -------- | -------------- | -------------- |
+| admin-service           | 8080     | 3500           | 50001          |
+| audit-service           | 8015     | 3500           | 50001          |
+| auth-service            | 8003     | 3500           | 50001          |
+| cart-service            | 8004     | 3500           | 50001          |
+| inventory-service       | 8005     | 3500           | 50001          |
+| notification-service    | 8010     | 3500           | 50001          |
+| order-processor-service | 8007     | 3500           | 50001          |
+| order-service           | 8006     | 3500           | 50001          |
+| payment-service         | 8009     | 3500           | 50001          |
+| product-service         | 8001     | 3500           | 50001          |
+| review-service          | 8008     | 3500           | 50001          |
+| user-service            | 8002     | 3500           | 50001          |
 
 ---
 
@@ -166,22 +166,22 @@ spec:
 
 ### Detailed Publisher/Consumer Matrix
 
-| Service | Technology | Role | Events Published | Events Consumed |
-|---------|-----------|------|------------------|-----------------|
-| **admin-service** | Node.js | Publisher | 3 | 0 |
-| **audit-service** | TypeScript | Consumer | 0 | 40+ |
-| **auth-service** | Node.js | Publisher | 6 | 0 |
-| **cart-service** | Java | Publisher | 4 | 0 |
-| **inventory-service** | Python | Hybrid | 6 | 6 |
-| **notification-service** | TypeScript | Hybrid | 2 | 20+ |
-| **order-processor-service** | Java | Hybrid | 12 | 7 |
-| **order-service** | C# .NET | Publisher | 5 | 0 |
-| **payment-service** | C# .NET | Hybrid | 4 | 2 |
-| **product-service** | Python | Hybrid | 6 | 5 |
-| **review-service** | Node.js | Publisher | 3 | 0 |
-| **user-service** | Node.js | Publisher | 7 | 0 |
-| **web-bff** | TypeScript | None | 0 | 0 |
-| **chat-service** | TypeScript | None | 0 | 0 |
+| Service                     | Technology | Role      | Events Published | Events Consumed |
+| --------------------------- | ---------- | --------- | ---------------- | --------------- |
+| **admin-service**           | Node.js    | Publisher | 3                | 0               |
+| **audit-service**           | TypeScript | Consumer  | 0                | 40+             |
+| **auth-service**            | Node.js    | Publisher | 6                | 0               |
+| **cart-service**            | Java       | Publisher | 4                | 0               |
+| **inventory-service**       | Python     | Hybrid    | 6                | 6               |
+| **notification-service**    | TypeScript | Hybrid    | 2                | 20+             |
+| **order-processor-service** | Java       | Hybrid    | 12               | 7               |
+| **order-service**           | C# .NET    | Publisher | 5                | 0               |
+| **payment-service**         | C# .NET    | Hybrid    | 4                | 2               |
+| **product-service**         | Python     | Hybrid    | 6                | 5               |
+| **review-service**          | Node.js    | Publisher | 3                | 0               |
+| **user-service**            | Node.js    | Publisher | 7                | 0               |
+| **web-bff**                 | TypeScript | None      | 0                | 0               |
+| **chat-service**            | TypeScript | None      | 0                | 0               |
 
 ---
 
@@ -189,99 +189,99 @@ spec:
 
 ### Authentication Events (auth-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `auth.login` | `auth.login` | User successfully logged in | audit-service, notification-service |
-| `auth.register` | `auth.register` | New user registered | audit-service, notification-service |
-| `auth.email.verification.required` | `auth.email.verification.required` | Email verification needed | audit-service, notification-service |
-| `auth.password.reset.requested` | `auth.password.reset.requested` | Password reset initiated | audit-service, notification-service |
-| `auth.password.reset.completed` | `auth.password.reset.completed` | Password successfully reset | audit-service, notification-service |
-| `auth.account.reactivated` | `auth.account.reactivated` | Account reactivated | audit-service, notification-service |
+| Event Type                         | Topic                              | Description                 | Consumer(s)                         |
+| ---------------------------------- | ---------------------------------- | --------------------------- | ----------------------------------- |
+| `auth.login`                       | `auth.login`                       | User successfully logged in | audit-service, notification-service |
+| `auth.register`                    | `auth.register`                    | New user registered         | audit-service, notification-service |
+| `auth.email.verification.required` | `auth.email.verification.required` | Email verification needed   | audit-service, notification-service |
+| `auth.password.reset.requested`    | `auth.password.reset.requested`    | Password reset initiated    | audit-service, notification-service |
+| `auth.password.reset.completed`    | `auth.password.reset.completed`    | Password successfully reset | audit-service, notification-service |
+| `auth.account.reactivated`         | `auth.account.reactivated`         | Account reactivated         | audit-service, notification-service |
 
 ### User Events (user-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `user.created` | `user.created` | New user profile created | audit-service, notification-service |
-| `user.updated` | `user.updated` | User profile updated | audit-service, notification-service |
-| `user.deleted` | `user.deleted` | User account deleted | audit-service, notification-service |
-| `user.logged_in` | `user.logged_in` | User login recorded | audit-service |
-| `user.logged_out` | `user.logged_out` | User logout recorded | audit-service |
-| `user.deactivated` | `user.deactivated` | Account deactivated | audit-service, notification-service |
-| `user.email_verified` | `user.email_verified` | Email verified | audit-service, notification-service |
+| Event Type            | Topic                 | Description              | Consumer(s)                         |
+| --------------------- | --------------------- | ------------------------ | ----------------------------------- |
+| `user.created`        | `user.created`        | New user profile created | audit-service, notification-service |
+| `user.updated`        | `user.updated`        | User profile updated     | audit-service, notification-service |
+| `user.deleted`        | `user.deleted`        | User account deleted     | audit-service, notification-service |
+| `user.logged_in`      | `user.logged_in`      | User login recorded      | audit-service                       |
+| `user.logged_out`     | `user.logged_out`     | User logout recorded     | audit-service                       |
+| `user.deactivated`    | `user.deactivated`    | Account deactivated      | audit-service, notification-service |
+| `user.email_verified` | `user.email_verified` | Email verified           | audit-service, notification-service |
 
 ### Order Events (order-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `order.created` | `order.created` | New order placed | order-processor-service, payment-service, inventory-service, audit-service, notification-service |
-| `order.updated` | `order.updated` | Order modified | audit-service, notification-service |
-| `order.cancelled` | `order.cancelled` | Order cancelled | payment-service, inventory-service, audit-service, notification-service |
-| `order.completed` | `order.completed` | Order fulfilled | audit-service, notification-service |
-| `order.status.changed` | `order.status.changed` | Order status updated | audit-service, notification-service |
+| Event Type             | Topic                  | Description          | Consumer(s)                                                                                      |
+| ---------------------- | ---------------------- | -------------------- | ------------------------------------------------------------------------------------------------ |
+| `order.created`        | `order.created`        | New order placed     | order-processor-service, payment-service, inventory-service, audit-service, notification-service |
+| `order.updated`        | `order.updated`        | Order modified       | audit-service, notification-service                                                              |
+| `order.cancelled`      | `order.cancelled`      | Order cancelled      | payment-service, inventory-service, audit-service, notification-service                          |
+| `order.completed`      | `order.completed`      | Order fulfilled      | audit-service, notification-service                                                              |
+| `order.status.changed` | `order.status.changed` | Order status updated | audit-service, notification-service                                                              |
 
 ### Payment Events (payment-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `payment.processing` | `payment.processing` | Payment being processed | audit-service |
-| `payment.received` | `payment.received` | Payment successful | order-processor-service, inventory-service, audit-service, notification-service |
-| `payment.failed` | `payment.failed` | Payment failed | order-processor-service, audit-service, notification-service |
-| `payment.refund` | `payment.refund` | Refund processed | audit-service, notification-service |
+| Event Type           | Topic                | Description             | Consumer(s)                                                                     |
+| -------------------- | -------------------- | ----------------------- | ------------------------------------------------------------------------------- |
+| `payment.processing` | `payment.processing` | Payment being processed | audit-service                                                                   |
+| `payment.received`   | `payment.received`   | Payment successful      | order-processor-service, inventory-service, audit-service, notification-service |
+| `payment.failed`     | `payment.failed`     | Payment failed          | order-processor-service, audit-service, notification-service                    |
+| `payment.refund`     | `payment.refund`     | Refund processed        | audit-service, notification-service                                             |
 
 ### Inventory Events (inventory-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `inventory.stock.updated` | `inventory.stock.updated` | Stock quantity changed | product-service, audit-service |
-| `inventory.reserved` | `inventory.reserved` | Stock reserved for order | order-processor-service, audit-service |
-| `inventory.released` | `inventory.released` | Reserved stock released | order-processor-service, audit-service |
-| `inventory.low.stock` | `inventory.low.stock` | Low stock alert | notification-service, audit-service |
-| `inventory.out.of.stock` | `inventory.out.of.stock` | Out of stock alert | product-service, notification-service, audit-service |
-| `inventory.created` | `inventory.created` | New inventory record | audit-service |
+| Event Type                | Topic                     | Description              | Consumer(s)                                          |
+| ------------------------- | ------------------------- | ------------------------ | ---------------------------------------------------- |
+| `inventory.stock.updated` | `inventory.stock.updated` | Stock quantity changed   | product-service, audit-service                       |
+| `inventory.reserved`      | `inventory.reserved`      | Stock reserved for order | order-processor-service, audit-service               |
+| `inventory.released`      | `inventory.released`      | Reserved stock released  | order-processor-service, audit-service               |
+| `inventory.low.stock`     | `inventory.low.stock`     | Low stock alert          | notification-service, audit-service                  |
+| `inventory.out.of.stock`  | `inventory.out.of.stock`  | Out of stock alert       | product-service, notification-service, audit-service |
+| `inventory.created`       | `inventory.created`       | New inventory record     | audit-service                                        |
 
 ### Product Events (product-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `product.created` | `product.created` | New product added | inventory-service, audit-service |
-| `product.updated` | `product.updated` | Product modified | inventory-service, audit-service |
-| `product.deleted` | `product.deleted` | Product removed | inventory-service, audit-service |
-| `product.price.changed` | `product.price.changed` | Price updated | audit-service, notification-service |
-| `product.badge.assigned` | `product.badge.assigned` | Badge added | audit-service |
-| `product.badge.removed` | `product.badge.removed` | Badge removed | audit-service |
+| Event Type               | Topic                    | Description       | Consumer(s)                         |
+| ------------------------ | ------------------------ | ----------------- | ----------------------------------- |
+| `product.created`        | `product.created`        | New product added | inventory-service, audit-service    |
+| `product.updated`        | `product.updated`        | Product modified  | inventory-service, audit-service    |
+| `product.deleted`        | `product.deleted`        | Product removed   | inventory-service, audit-service    |
+| `product.price.changed`  | `product.price.changed`  | Price updated     | audit-service, notification-service |
+| `product.badge.assigned` | `product.badge.assigned` | Badge added       | audit-service                       |
+| `product.badge.removed`  | `product.badge.removed`  | Badge removed     | audit-service                       |
 
 ### Review Events (review-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `review.created` | `reviews` | New review submitted | product-service, audit-service |
-| `review.updated` | `reviews` | Review modified | product-service, audit-service |
-| `review.deleted` | `reviews` | Review removed | product-service, audit-service |
+| Event Type       | Topic            | Description          | Consumer(s)                    |
+| ---------------- | ---------------- | -------------------- | ------------------------------ |
+| `review.created` | `review.created` | New review submitted | product-service, audit-service |
+| `review.updated` | `review.updated` | Review modified      | product-service, audit-service |
+| `review.deleted` | `review.deleted` | Review removed       | product-service, audit-service |
 
 ### Cart Events (cart-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `cart.item.added` | `cart.item.added` | Item added to cart | audit-service |
-| `cart.item.removed` | `cart.item.removed` | Item removed from cart | audit-service |
-| `cart.cleared` | `cart.cleared` | Cart emptied | audit-service |
-| `cart.abandoned` | `cart.abandoned` | Cart abandoned | notification-service, audit-service |
+| Event Type          | Topic               | Description            | Consumer(s)                         |
+| ------------------- | ------------------- | ---------------------- | ----------------------------------- |
+| `cart.item.added`   | `cart.item.added`   | Item added to cart     | audit-service                       |
+| `cart.item.removed` | `cart.item.removed` | Item removed from cart | audit-service                       |
+| `cart.cleared`      | `cart.cleared`      | Cart emptied           | audit-service                       |
+| `cart.abandoned`    | `cart.abandoned`    | Cart abandoned         | notification-service, audit-service |
 
 ### Admin Events (admin-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `admin.action.performed` | `admin.action.performed` | Admin action logged | audit-service |
-| `admin.user.created` | `admin.user.created` | Admin created user | audit-service, notification-service |
-| `admin.config.changed` | `admin.config.changed` | Configuration modified | audit-service |
+| Event Type               | Topic                    | Description            | Consumer(s)                         |
+| ------------------------ | ------------------------ | ---------------------- | ----------------------------------- |
+| `admin.action.performed` | `admin.action.performed` | Admin action logged    | audit-service                       |
+| `admin.user.created`     | `admin.user.created`     | Admin created user     | audit-service, notification-service |
+| `admin.config.changed`   | `admin.config.changed`   | Configuration modified | audit-service                       |
 
 ### Notification Events (notification-service)
 
-| Event Type | Topic | Description | Consumer(s) |
-|------------|-------|-------------|-------------|
-| `notification.sent` | `notification.sent` | Notification delivered | audit-service |
-| `notification.failed` | `notification.failed` | Delivery failed | audit-service |
+| Event Type            | Topic                 | Description            | Consumer(s)   |
+| --------------------- | --------------------- | ---------------------- | ------------- |
+| `notification.sent`   | `notification.sent`   | Notification delivered | audit-service |
+| `notification.failed` | `notification.failed` | Delivery failed        | audit-service |
 
 ---
 
@@ -605,21 +605,21 @@ spec:
   version: v1
   metadata:
     - name: connectionString
-      value: "amqp://admin:admin123@127.0.0.1:5672"
+      value: 'amqp://admin:admin123@127.0.0.1:5672'
     - name: exchangeName
-      value: "xshopai.events"
+      value: 'xshopai.events'
     - name: exchangeKind
-      value: "topic"
+      value: 'topic'
     - name: durable
-      value: "true"
+      value: 'true'
     - name: autoAck
-      value: "false"
+      value: 'false'
     - name: deliveryMode
-      value: "2"
+      value: '2'
     - name: requeueInFailure
-      value: "true"
+      value: 'true'
     - name: prefetchCount
-      value: "10"
+      value: '10'
 ```
 
 ### Dapr Subscription Example
@@ -677,6 +677,7 @@ All events follow CloudEvents v1.0 specification:
 **Symptoms:** Consumer service not receiving events
 
 **Checklist:**
+
 - [ ] Verify Dapr sidecar is running (`dapr list`)
 - [ ] Check pub/sub component name matches (`xshopai-pubsub`)
 - [ ] Verify topic name in subscription matches publisher
@@ -696,6 +697,7 @@ curl http://localhost:3500/v1.0/metadata
 **Symptoms:** "Connection refused" errors
 
 **Checklist:**
+
 - [ ] Verify RabbitMQ is running: `docker ps | grep rabbitmq`
 - [ ] Check connection string in component YAML
 - [ ] Verify credentials (admin/admin123)
@@ -711,6 +713,7 @@ curl -u admin:admin123 http://localhost:15672/api/overview
 **Symptoms:** Events processed multiple times
 
 **Solution:** Ensure event handlers are idempotent:
+
 - Use unique event IDs for deduplication
 - Check if operation already applied before processing
 - Use database transactions with idempotency keys
@@ -720,6 +723,7 @@ curl -u admin:admin123 http://localhost:15672/api/overview
 **Symptoms:** Consumer fails to parse event data
 
 **Checklist:**
+
 - [ ] Verify CloudEvents format
 - [ ] Check `datacontenttype` is `application/json`
 - [ ] Ensure `data` field matches expected schema
@@ -750,37 +754,16 @@ curl -X POST http://localhost:3500/v1.0/publish/xshopai-pubsub/test.topic \
 
 ## Known Configuration Issues
 
-### ⚠️ Issue 1: Inconsistent RabbitMQ Credentials
-
-**Affected Services:** inventory-service
-
-**Problem:** Uses `guest:guest` instead of `admin:admin123`
-
-**Fix:** Update `inventory-service/.dapr/components/event-bus.yaml`:
-```yaml
-- name: connectionString
-  value: "amqp://admin:admin123@127.0.0.1:5672"  # Change from guest:guest
-```
-
-### ⚠️ Issue 2: Review Events Topic Naming
-
-**Problem:** Multiple naming conventions for review events
-
-| Service | Topic Used |
-|---------|-----------|
-| review-service | `reviews` (single topic, differentiates by event type) |
-| audit-service | `review.created`, `review.updated`, `review.deleted` (separate topics) |
-| product-service | `reviews` (single topic) |
-
-**Recommendation:** Standardize on `review.created`, `review.updated`, `review.deleted` pattern
-
-### ⚠️ Issue 3: Missing Subscription Configurations
+### ⚠️ Issue 1: Missing Subscription Configurations
 
 **Affected Services:**
+
 - cart-service (no subscriptions.yaml found)
 - order-service (no subscriptions.yaml - expected, it's pure publisher)
 - web-bff (no pub/sub - expected, it's BFF only)
 - chat-service (no pub/sub - may need integration)
+
+> **Note:** All services must use `admin:admin123` credentials for local RabbitMQ (configured in `docker-compose.infrastructure.yml`). Production configurations are managed separately via infrastructure code and use managed identity.
 
 ---
 
@@ -850,23 +833,23 @@ notification.failed
 
 ### B. Service Technology Stack Summary
 
-| Service | Language | Framework | Database |
-|---------|----------|-----------|----------|
-| admin-service | JavaScript | Node.js/Express | MongoDB |
-| audit-service | TypeScript | Node.js/Express | MongoDB |
-| auth-service | JavaScript | Node.js/Express | MongoDB |
-| cart-service | Java | Spring Boot | Redis |
-| inventory-service | Python | Flask | PostgreSQL |
-| notification-service | TypeScript | Node.js/Express | MongoDB |
-| order-processor-service | Java | Spring Boot | PostgreSQL |
-| order-service | C# | .NET 8 | PostgreSQL |
-| payment-service | C# | .NET 8 | SQL Server |
-| product-service | Python | FastAPI | MongoDB |
-| review-service | JavaScript | Node.js/Express | MongoDB |
-| user-service | JavaScript | Node.js/Express | MongoDB |
-| web-bff | TypeScript | Node.js/Express | - |
-| chat-service | TypeScript | Node.js/Express | - |
+| Service                 | Language   | Framework       | Database   |
+| ----------------------- | ---------- | --------------- | ---------- |
+| admin-service           | JavaScript | Node.js/Express | MongoDB    |
+| audit-service           | TypeScript | Node.js/Express | MongoDB    |
+| auth-service            | JavaScript | Node.js/Express | MongoDB    |
+| cart-service            | Java       | Spring Boot     | Redis      |
+| inventory-service       | Python     | Flask           | PostgreSQL |
+| notification-service    | TypeScript | Node.js/Express | MongoDB    |
+| order-processor-service | Java       | Spring Boot     | PostgreSQL |
+| order-service           | C#         | .NET 8          | PostgreSQL |
+| payment-service         | C#         | .NET 8          | SQL Server |
+| product-service         | Python     | FastAPI         | MongoDB    |
+| review-service          | JavaScript | Node.js/Express | MongoDB    |
+| user-service            | JavaScript | Node.js/Express | MongoDB    |
+| web-bff                 | TypeScript | Node.js/Express | -          |
+| chat-service            | TypeScript | Node.js/Express | -          |
 
 ---
 
-*Document maintained by the xshopai Platform Team*
+_Document maintained by the xshopai Platform Team_
