@@ -1,8 +1,5 @@
 # xshopai Microservice Review Checklist
 
-> **Updated**: Based on inventory-service reference implementation  
-> **Applies to**: Python (Flask), Node.js (Express), Java (Spring Boot), .NET (ASP.NET Core)
-
 ## Configuration Files
 
 ### .env.local (Local without Dapr)
@@ -27,14 +24,6 @@
 - [ ] LOG_LEVEL, LOG_FORMAT, LOG_TO_CONSOLE, LOG_TO_FILE=false
 - [ ] ❌ NO secrets in this file (read from .dapr/secrets.json)
 
-### .dapr/secrets.json (Local Dapr secrets)
-
-- [ ] Valid JSON with key-value pairs only (flat structure)
-- [ ] `{db}-{level}-connection` (e.g., `mysql-server-connection`)
-- [ ] `jwt-secret`
-- [ ] `appinsights-connection` (empty string for local)
-- [ ] `service-{service}-token` for each dependency (e.g., `service-order-token`)
-- [ ] ❌ No `xshopai-` prefix (use simple names)
 
 ### .dapr/components/ (Dapr component files)
 
