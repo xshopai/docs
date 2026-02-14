@@ -68,7 +68,7 @@ messaging_provider.publish_event(topic, cloud_event, correlation_id)
 var cloudEvent = new
 {
     specversion = "1.0",
-    type = "order.placed",
+    type = "order.created",
     source = "order-service",
     id = Guid.NewGuid().ToString(),
     time = DateTime.UtcNow.ToString("o"),
@@ -190,15 +190,15 @@ def create_messaging_provider() -> MessagingProvider:
 
 All published events MUST include:
 
-| Field             | Type   | Description              | Example                      |
-| ----------------- | ------ | ------------------------ | ---------------------------- |
-| `specversion`     | String | CloudEvents spec version | `"1.0"`                      |
-| `type`            | String | Event type (namespaced)  | `"com.xshopai.order.placed"` |
-| `source`          | String | Service name             | `"order-service"`            |
-| `id`              | String | Unique event ID          | `"evt-123-abc"`              |
-| `time`            | String | ISO 8601 timestamp       | `"2026-02-10T10:30:00Z"`     |
-| `datacontenttype` | String | Content type             | `"application/json"`         |
-| `data`            | Object | Business event payload   | `{ orderId: "123", ... }`    |
+| Field             | Type   | Description              | Example                       |
+| ----------------- | ------ | ------------------------ | ----------------------------- |
+| `specversion`     | String | CloudEvents spec version | `"1.0"`                       |
+| `type`            | String | Event type (namespaced)  | `"com.xshopai.order.created"` |
+| `source`          | String | Service name             | `"order-service"`             |
+| `id`              | String | Unique event ID          | `"evt-123-abc"`               |
+| `time`            | String | ISO 8601 timestamp       | `"2026-02-10T10:30:00Z"`      |
+| `datacontenttype` | String | Content type             | `"application/json"`          |
+| `data`            | Object | Business event payload   | `{ orderId: "123", ... }`     |
 
 Optional but recommended:
 
