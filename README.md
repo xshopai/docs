@@ -4,6 +4,15 @@ Central documentation for xshopai project
 
 ## Available Documentation
 
+### Architecture & Workflows
+
+- **[Platform Architecture](PLATFORM_ARCHITECTURE.md)** - Complete platform architecture overview with service catalog
+- **[Workflow Documentation](workflows/)** - Visual sequence diagrams for key use cases
+  - [User Registration Workflow](workflows/USER_REGISTRATION_WORKFLOW.md) - Complete registration flow with service interactions
+- **[CloudEvents Standard](CLOUDEVENTS_STANDARD.md)** - Event payload specification for pub/sub messaging
+- **[Messaging Architecture](MESSAGING_ARCHITECTURE.md)** - Dapr pub/sub and event-driven patterns
+- **[Port Configuration](PORT_CONFIGURATION.md)** - Service port assignments and Dapr sidecar ports
+
 ### Development & Security
 
 - **[Pre-commit Hooks Security Guide](PRE_COMMIT_HOOKS_SECURITY_GUIDE.md)** - Comprehensive guide for implementing automated security checks and code quality enforcement
@@ -29,14 +38,24 @@ For security-related documentation, start with:
 Issue and pull request templates are available in the `.github/` directory:
 
 - Bug report template
-- Feature request template  
+- Feature request template
 - Custom issue template
 
 ## Getting Started
 
-1. Read the [Contributing Guidelines](CONTRIBUTING.md)
-2. Set up [Pre-commit Hooks](PRE_COMMIT_HOOKS_SECURITY_GUIDE.md) for security
-3. Follow the [Logging Standards](LOGGING_STANDARD.md) in your code
-4. Implement [Correlation IDs](CORRELATION_ID_GUIDE.md) for request tracking
+### For Developers
+
+1. Review the [Platform Architecture](PLATFORM_ARCHITECTURE.md) to understand the system
+2. Study [Workflow Documentation](workflows/) to see how services interact
+3. Read the [Contributing Guidelines](CONTRIBUTING.md)
+4. Set up [Pre-commit Hooks](PRE_COMMIT_HOOKS_SECURITY_GUIDE.md) for security
+5. Follow the [Logging Standards](LOGGING_STANDARD.md) in your code
+6. Implement [Correlation IDs](CORRELATION_ID_GUIDE.md) for request tracking
+
+### Understanding Service Communication
+
+- **Synchronous**: See HTTP endpoints in service-specific PRDs
+- **Asynchronous**: Review [CloudEvents Standard](CLOUDEVENTS_STANDARD.md) and [Messaging Architecture](MESSAGING_ARCHITECTURE.md)
+- **Visual Flows**: Check [Workflow diagrams](workflows/) for end-to-end sequences
 
 For questions or additional documentation needs, please create an issue in the main repository.
