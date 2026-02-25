@@ -240,13 +240,15 @@ _None - user-service is a pure publisher._
 
 #### Published Events
 
-| Event Type             | Topic                  | Description          | Consumer(s)                                                                                      |
-| ---------------------- | ---------------------- | -------------------- | ------------------------------------------------------------------------------------------------ |
-| `order.created`        | `order.created`        | New order placed     | order-processor-service, payment-service, inventory-service, audit-service, notification-service |
-| `order.updated`        | `order.updated`        | Order modified       | audit-service, notification-service                                                              |
-| `order.cancelled`      | `order.cancelled`      | Order cancelled      | payment-service, inventory-service, audit-service, notification-service                          |
-| `order.completed`      | `order.completed`      | Order fulfilled      | audit-service, notification-service                                                              |
-| `order.status.changed` | `order.status.changed` | Order status updated | audit-service, notification-service                                                              |
+| Event Type             | Topic                  | Description            | Consumer(s)                                                                                      |
+| ---------------------- | ---------------------- | ---------------------- | ------------------------------------------------------------------------------------------------ |
+| `order.created`        | `order.created`        | New order placed       | order-processor-service, payment-service, inventory-service, audit-service, notification-service |
+| `order.confirmed`      | `order.confirmed`      | Order confirmed        | audit-service, notification-service                                                              |
+| `order.shipped`        | `order.shipped`        | Order shipped          | audit-service, notification-service, inventory-service                                           |
+| `order.delivered`      | `order.delivered`      | Order delivered        | audit-service, notification-service, review-service                                              |
+| `order.completed`      | `order.completed`      | Order fulfilled        | inventory-service, audit-service, notification-service                                           |
+| `order.cancelled`      | `order.cancelled`      | Order cancelled        | payment-service, inventory-service, audit-service, notification-service                          |
+| `order.refunded`       | `order.refunded`       | Order refunded         | inventory-service, audit-service, notification-service                                           |
 
 #### Consumed Events
 
@@ -297,6 +299,8 @@ _None - order-service is a pure publisher (saga initiator)._
 | ------------------ | ------------------ | --------------- | ------------------------------- | ------------------------------- |
 | `order.created`    | `order.created`    | order-service   | `/dapr/events/order.created`    | Reserve stock for order items   |
 | `order.cancelled`  | `order.cancelled`  | order-service   | `/dapr/events/order.cancelled`  | Release reserved stock          |
+| `order.completed`  | `order.completed`  | order-service   | `/dapr/events/order.completed`  | Confirm stock sold              |
+| `order.refunded`   | `order.refunded`   | payment-service | `/dapr/events/order.refunded`   | Return stock to available       |
 | `payment.received` | `payment.received` | payment-service | `/dapr/events/payment.received` | Confirm stock reservation       |
 | `payment.failed`   | `payment.failed`   | payment-service | `/dapr/events/payment.failed`   | Release reserved stock          |
 | `product.created`  | `product.created`  | product-service | `/dapr/events/product.created`  | Create initial inventory record |
@@ -465,7 +469,7 @@ Audit service subscribes to **all events** across the platform for compliance, d
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Auth**         | `auth.login`, `auth.register`, `auth.email.verification.required`, `auth.password.reset.requested`, `auth.password.reset.completed`, `auth.account.reactivated` |
 | **User**         | `user.created`, `user.updated`, `user.deleted`, `user.logged_in`, `user.logged_out`, `user.deactivated`, `user.email_verified`                                  |
-| **Order**        | `order.created`, `order.updated`, `order.cancelled`, `order.completed`, `order.status.changed`, `order.failed`                                                  |
+| **Order**        | `order.created`, `order.confirmed`, `order.shipped`, `order.delivered`, `order.completed`, `order.cancelled`, `order.refunded`                                  |
 | **Payment**      | `payment.processing`, `payment.received`, `payment.failed`, `payment.refund`                                                                                    |
 | **Inventory**    | `inventory.stock.updated`, `inventory.reserved`, `inventory.released`, `inventory.low.stock`, `inventory.out.of.stock`, `inventory.created`                     |
 | **Product**      | `product.created`, `product.updated`, `product.deleted`, `product.price.changed`, `product.badge.assigned`, `product.badge.removed`                             |
